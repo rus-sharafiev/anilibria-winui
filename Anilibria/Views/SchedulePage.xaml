@@ -1,0 +1,62 @@
+﻿<Page
+    x:Class="Anilibria.Views.SchedulePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
+    xmlns:converters="using:Anilibria.Converters"
+    xmlns:models="using:Anilibria.Core.Models"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <CollectionViewSource x:Key="TitlesGroups" 
+                              Source="{x:Bind ViewModel.TitlesGroups, Mode=OneWay}" 
+                              IsSourceGrouped="True" 
+                              ItemsPath="Titles"/>
+
+        <converters:ImageSourceConverter x:Key="ImageSourceConverter"/>
+    </Page.Resources>
+
+    <Grid>
+        <GridView x:Name="ScheduleGridView"
+                  ItemsSource="{Binding Source={StaticResource TitlesGroups}}"
+                  SelectionMode="None"
+                  IsItemClickEnabled="True"
+                  ItemClick="{x:Bind ViewModel.OnItemClick}"
+                  Padding="{StaticResource NavigationViewPageContentMargin}"
+                  animations:Connected.ListItemElementName="itemPoster"
+                  animations:Connected.ListItemKey="listItemKey">
+
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="models:Title">
+                    <Grid Width="150" x:Name="itemPoster">
+                        <Image>
+                            <Image.Source>
+                                <BitmapImage UriSource="{x:Bind Posters.Small.Url, Converter={StaticResource ImageSourceConverter}}"
+                                             DecodePixelWidth="150" DecodePixelType="Logical"/>
+                            </Image.Source>
+                        </Image>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+
+            <GridView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate x:DataType="models:GroupedTitles">
+                            <Grid Margin="0">
+                                <TextBlock Text='{x:Bind WeekDay}' 
+                                           Margin="12"
+                                           Style="{StaticResource HeaderTextBlockStyle}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </GridView.GroupStyle>
+
+        </GridView>
+
+        <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
+    </Grid>
+</Page>

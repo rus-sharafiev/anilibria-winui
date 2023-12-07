@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "Anilibria (Unpackaged)": {
+        "commandName": "Project"
+      },
+      "Anilibria (Package)": {
+        "commandName": "MsixPackage"
+      }
+    }
+}
