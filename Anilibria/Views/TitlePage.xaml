@@ -11,7 +11,7 @@
 
     <Page.Resources>
         <converters:ImageSourceConverter x:Key="ImageSourceConverter"/>
-
+        <converters:UnixTimeToStringConverter x:Key="UnixTimeToStringConverter" />
     </Page.Resources>
 
     <Grid x:Name="ContentArea">
@@ -89,7 +89,8 @@
                     <StackPanel x:Name="propertiesGroup2" RelativePanel.Below="propertiesGroup1">
                         <StackPanel x:Name="shipToGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Последнее изменение" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.ReleaseDateTime, Mode=OneWay}" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
+                                       Text="{x:Bind ViewModel.Title.Updated, Converter={StaticResource UnixTimeToStringConverter}, Mode=OneWay}" />
                         </StackPanel>
 
                         <StackPanel x:Name="orderTotalGroup" Margin="{StaticResource SmallTopMargin}">
@@ -120,22 +121,9 @@
                         Header="Список эпизодов"
                         MinWidth="400"
                         Margin="{StaticResource SmallRightMargin}"
-                        ItemsSource="{x:Bind ViewModel.EpisodesList, Mode=OneWay}" 
-                        DisplayMemberPath="Item1"
-                        SelectedValuePath="Item2"
+                        ItemsSource="{x:Bind ViewModel.EpisodesList, Mode=OneWay}"
                         SelectedIndex="{x:Bind ViewModel.SelectedEpisode, Mode=OneWay}"
                         SelectionChanged="{x:Bind ViewModel.EpisodesComboBox_SelectionChanged}"/>
-
-                    <ComboBox 
-                        x:Name="VideoQualityComboBox"
-                        Header="Разрешение видео"
-                        MinWidth="200"
-                        Margin="{StaticResource SmallRightMargin}"
-                        ItemsSource="{x:Bind ViewModel.QualityList, Mode=OneWay}" 
-                        DisplayMemberPath="Item1"
-                        SelectedValuePath="Item2"
-                        SelectedIndex="{x:Bind ViewModel.SelectedQlt, Mode=OneWay}"
-                        SelectionChanged="{x:Bind ViewModel.VideoQualityComboBox_SelectionChanged}"/>
 
                 </StackPanel>
 
@@ -147,7 +135,7 @@
 
                         <MediaPlayerElement 
                             x:Name="MediaPlayer"
-                            Source="{x:Bind ViewModel.VideoSource, Mode=OneWay}"
+                            Source="{x:Bind ViewModel.MediaPlaybackList, Mode=OneWay}"
                             AreTransportControlsEnabled="True"
                             IsFullWindow="True">
                             <MediaPlayerElement.TransportControls>
@@ -155,6 +143,8 @@
                                                                        IsSkipForwardEnabled="True"
                                                                        IsSkipBackwardButtonVisible="True"
                                                                        IsSkipBackwardEnabled="True"
+                                                                       IsNextTrackButtonVisible="True"
+                                                                       IsPreviousTrackButtonVisible="True"
                                                                        IsCompact="True"
                                                                        OnFullWindowClick="{x:Bind ViewModel.FullScreenButton_Click, Mode=OneWay}"/>
                             </MediaPlayerElement.TransportControls>
