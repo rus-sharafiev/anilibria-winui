@@ -476,3 +476,5 @@ public partial class TypeClass
 }
 
 public enum SeasonString { Весна, Зима, Лето, Осень };
+
+public enum QltString { SD, HD, FHD };

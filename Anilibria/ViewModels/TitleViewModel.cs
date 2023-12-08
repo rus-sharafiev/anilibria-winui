@@ -8,28 +8,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Media.Core;
 using Microsoft.UI.Xaml;
-
+using Windows.Media.Playback;
 
 namespace Anilibria.ViewModels;
 
 public partial class TitleViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly IApiService _apiService;
-
     [ObservableProperty]
     private Title? title;
-
-    [ObservableProperty]
-    private string? releaseDateTime;
-
-    [ObservableProperty]
-    private MediaSource? videoSource;
-
-    [ObservableProperty]
-    private int selectedEpisode = 0;
-
-    [ObservableProperty]
-    private int selectedQlt = 1;
 
     [ObservableProperty]
     private Grid? playerContainer;
@@ -38,10 +24,18 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
     private Grid? videoContainer;
 
     [ObservableProperty]
-    private MediaPlayerElement? mediaPlayerElement;
+    private MediaPlaybackList _mediaPlaybackList = new();
 
-    public ObservableCollection<Tuple<string, ListValue>> EpisodesList { get; } = [];
-    public ObservableCollection<Tuple<string, string>> QualityList { get; } = [];
+    [ObservableProperty]
+    private ObservableCollection<string> _episodesList = [];
+
+    [ObservableProperty]
+    private QltString _qlt = QltString.HD;
+
+    [ObservableProperty]
+    private int _selectedEpisode = 0;
+
+    private readonly IApiService _apiService;
 
     public TitleViewModel(IApiService apiService)
     {
@@ -54,12 +48,7 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
         if (parameter is Title title)
         {
             Title = title;
-            ReleaseDateTime = DateTimeOffset.FromUnixTimeSeconds(title.LastChange).ToString("G");
-            foreach (var entry in title.Player.List)
-            {
-                var episode = entry.Value.Name is not null ? $". {entry.Value.Name}" : " серия";
-                EpisodesList.Add(new Tuple<string, ListValue>($"{entry.Value.Episode}{episode}", entry.Value));
-            }
+            CreateMediaPlaybackList(title);
         }
     }
 
@@ -67,49 +56,42 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
     {
         PlayerContainer = null;
         VideoContainer = null;
-        if (MediaPlayerElement is not null)
-        {
-            MediaPlayerElement.Source = null;
-            MediaPlayerElement = null;
-        }
+        MediaPlaybackList.Items.Clear();
     }
     #endregion
 
+    private void CreateMediaPlaybackList(Title title)
+    {
+        MediaPlaybackList.Items.Clear();
+        foreach (var entry in title.Player.List)
+        {
+            var episode = entry.Value.Name is not null ? $". {entry.Value.Name}" : " серия";
+            EpisodesList.Add($"{entry.Value.Episode}{episode}");
+
+            var qlt = Qlt switch
+            {
+                QltString.SD => entry.Value.Hls.Sd,
+                QltString.HD => entry.Value.Hls.Hd,
+                QltString.FHD => entry.Value.Hls.Fhd,
+                _ => null
+            };
+
+            if (qlt is not null)
+            {
+                var uri = new Uri(new Uri($"https://{title.Player.Host}"), qlt);
+                var mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(uri));
+                MediaPlaybackList.Items.Add(mediaPlaybackItem);
+            }
+        }
+    }
+
     public void EpisodesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs args)
     {
-        QualityList.Clear();
-        foreach (var video in args.AddedItems.Cast<Tuple<string, ListValue>>())
+        var comboBox = sender as ComboBox;
+        if (comboBox is not null && comboBox.SelectedIndex >= 0)
         {
-            foreach (var property in video.Item2.Hls.GetType().GetProperties())
-            {
-                var value = property.GetValue(video.Item2.Hls) as string;
-                if (value is not null)
-                {
-                    QualityList.Add(new Tuple<string, string>(property.Name.ToUpper(), value));
-                }
-                SelectedQlt = 1;
-            }
-        }
-    }
-
-    public void VideoQualityComboBox_SelectionChanged(object sender, SelectionChangedEventArgs args)
-    {
-        foreach (var source in args.AddedItems.Cast<Tuple<string, string>>())
-        {
-            if (Title is not null)
-            {
-                var uri = new Uri(new Uri($"https://{Title.Player.Host}"), source.Item2);
-                VideoSource = MediaSource.CreateFromUri(uri);
-            }
-        }
-    }
-
-    public void PlayerContainer_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        if (PlayerContainer is not null)
-        {
-            PlayerContainer.MinHeight = PlayerContainer.MaxHeight = e.NewSize.Width * 9 / 16;
-            PlayerContainer.UpdateLayout();
+            System.Diagnostics.Debug.WriteLine(comboBox.SelectedIndex);
+            MediaPlaybackList.MoveTo((uint)comboBox.SelectedIndex);
         }
     }
 
@@ -165,6 +147,15 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
                 App.MainWindow.Show();
                 PlayerContainer.Children.Add(mediaPlayerElement);
             }
+        }
+    }
+
+    public void PlayerContainer_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (PlayerContainer is not null)
+        {
+            PlayerContainer.MinHeight = PlayerContainer.MaxHeight = e.NewSize.Width * 9 / 16;
+            PlayerContainer.UpdateLayout();
         }
     }
     #endregion
