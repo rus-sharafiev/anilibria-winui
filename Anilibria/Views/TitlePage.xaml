@@ -12,24 +12,46 @@
     <Page.Resources>
         <converters:ImageSourceConverter x:Key="ImageSourceConverter"/>
         <converters:UnixTimeToStringConverter x:Key="UnixTimeToStringConverter" />
+        <converters:StringListToStringConverter x:Key="StringListToStringConverter" />
+        <converters:StringListToVisibilityConverter x:Name="StringListToVisibilityConverter" />
     </Page.Resources>
 
     <Grid x:Name="ContentArea">
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualState>
+
+                <VisualState x:Name="TwoColumns">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="956" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="title.(RelativePanel.RightOf)" Value="titlePoster" />
+                        <Setter Target="title.(RelativePanel.AlignTopWithPanel)" Value="True" />
+                        <Setter Target="infoGroup.(RelativePanel.RightOf)" Value="titlePoster" />
+                        <Setter Target="infoGroup.(RelativePanel.Below)" Value="title" />
+                        <Setter Target="infoGroup.Margin" Value="{StaticResource MediumLeftMargin}" />
+                        <Setter Target="teamGroup.(RelativePanel.RightOf)" Value="infoGroup" />
+                        <Setter Target="teamGroup.(RelativePanel.Below)" Value="title" />
+                        <Setter Target="teamGroup.Margin" Value="{StaticResource MediumLeftMargin}" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="OneColumn">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="641" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="propertiesGroup1.(RelativePanel.RightOf)" Value="titlePoster" />
-                        <Setter Target="propertiesGroup1.(RelativePanel.Below)" Value="title" />
-                        <Setter Target="propertiesGroup2.(RelativePanel.RightOf)" Value="propertiesGroup1" />
-                        <Setter Target="propertiesGroup2.(RelativePanel.Below)" Value="title" />
-                        <Setter Target="propertiesGroup1.Width" Value="200" />
+                        <Setter Target="title.(RelativePanel.RightOf)" Value="titlePoster" />
+                        <Setter Target="title.(RelativePanel.AlignTopWithPanel)" Value="True" />
+                        <Setter Target="infoGroup.(RelativePanel.RightOf)" Value="titlePoster" />
+                        <Setter Target="infoGroup.(RelativePanel.Below)" Value="title" />
+                        <Setter Target="infoGroup.Margin" Value="{StaticResource MediumLeftMargin}" />
+                        <Setter Target="teamGroup.(RelativePanel.RightOf)" Value="titlePoster" />
+                        <Setter Target="teamGroup.Margin" Value="{StaticResource MediumLeftMargin}" />
                     </VisualState.Setters>
                 </VisualState>
+                
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
@@ -37,6 +59,7 @@
             <StackPanel x:Name="contentPanel" 
                         Padding="{StaticResource NavigationViewPageContentMargin}">
                 <RelativePanel>
+                    
                     <Grid
                         x:Name="titlePoster"
                         Width="300"
@@ -57,45 +80,92 @@
 
                     <TextBlock
                         x:Name="title"
-                        Margin="{StaticResource XXSmallTopMargin}"
-                        RelativePanel.AlignTopWithPanel="True"
-                        RelativePanel.RightOf="titlePoster"
+                        RelativePanel.Below="titlePoster"
                         Style="{ThemeResource TitleTextBlockStyle}"
+                        Margin="{StaticResource SmallLeftRightMargin}"
                         Text="{x:Bind ViewModel.Title.Names.Ru, Mode=OneWay}" />
 
-                    <StackPanel x:Name="propertiesGroup1" RelativePanel.Below="titlePoster">
-                        <StackPanel x:Name="statusGroup" Margin="{StaticResource SmallTopMargin}">
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Статус" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Title.Status.String, Mode=OneWay}" />
+                    <StackPanel x:Name="infoGroup" RelativePanel.Below="title" Width="180">
+                        <StackPanel x:Name="seasonGroup" Margin="{StaticResource SmallTopMargin}">
+                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
+                                       Margin="{StaticResource SmallRightMargin}" Text="Сезон" />
+                            <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}">
+                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
+                                           Text="{x:Bind ViewModel.Title.Season.String, Mode=OneWay}"
+                                           Margin="0, 0, 2, 0"
+                                           VerticalAlignment="Bottom"/>
+                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
+                                           Text="{x:Bind ViewModel.Title.Season.Year, Mode=OneWay}"
+                                           VerticalAlignment="Bottom" />
+                            </StackPanel>
                         </StackPanel>
 
-                        <StackPanel x:Name="orderDateGroup" Margin="{StaticResource SmallTopMargin}">
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Жанры" />
-                            <ItemsControl ItemsSource="{x:Bind ViewModel.Title.Genres}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="x:String">
-                                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallTopMargin}" Text="{x:Bind}" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                        <StackPanel x:Name="typeGroup" Margin="{StaticResource SmallTopMargin}">
+                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
+                                       Margin="{StaticResource SmallRightMargin}" Text="Тип" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallLeftMargin}"
+                                       Text="{x:Bind ViewModel.Title.Type.FullString, Mode=OneWay}" 
+                                       VerticalAlignment="Bottom"/>
+                        </StackPanel>
+
+                        <StackPanel x:Name="statusGroup" Margin="{StaticResource SmallTopMargin}">
+                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
+                                       Margin="{StaticResource SmallRightMargin}" Text="Статус" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallLeftMargin}"
+                                       Text="{x:Bind ViewModel.Title.Status.String, Mode=OneWay}" 
+                                       VerticalAlignment="Bottom" />
+                        </StackPanel>
+
+                        <StackPanel x:Name="genresGroup" Margin="{StaticResource SmallTopMargin}">
+                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
+                                       Margin="{StaticResource SmallRightMargin}" Text="Жанры" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallLeftMargin}"
+                                       Text="{x:Bind ViewModel.Title.Genres, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
+                                       VerticalAlignment="Bottom" />
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel x:Name="propertiesGroup2" RelativePanel.Below="propertiesGroup1">
-                        <StackPanel x:Name="shipToGroup" Margin="{StaticResource SmallTopMargin}">
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Последнее изменение" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
-                                       Text="{x:Bind ViewModel.Title.Updated, Converter={StaticResource UnixTimeToStringConverter}, Mode=OneWay}" />
+                    <StackPanel x:Name="teamGroup" RelativePanel.Below="infoGroup">
+                        <StackPanel x:Name="voiceGroup" Margin="{StaticResource SmallTopMargin}">
+                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
+                                        Margin="{StaticResource SmallRightMargin}" Text="Озвучка" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallLeftMargin}"
+                                        Text="{x:Bind ViewModel.Title.Team.Voice, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
+                                        VerticalAlignment="Bottom" />
                         </StackPanel>
 
-                        <StackPanel x:Name="orderTotalGroup" Margin="{StaticResource SmallTopMargin}">
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="ID" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Title.Id, Mode=OneWay}" />
+                        <StackPanel x:Name="timingeGroup" Margin="{StaticResource SmallTopMargin}">
+                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
+                                       Margin="{StaticResource SmallRightMargin}" Text="Тайминг" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallLeftMargin}"
+                                       Text="{x:Bind ViewModel.Title.Team.Timing, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
+                                       VerticalAlignment="Bottom" />
+                        </StackPanel>
+
+                        <StackPanel x:Name="decorGroup" Margin="{StaticResource SmallTopMargin}">
+                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
+                                       Margin="{StaticResource SmallRightMargin}" Text="Работа над субтитрами" />
+                            <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}"
+                                        Visibility="{x:Bind ViewModel.Title.Team.Translator, Converter={StaticResource StringListToVisibilityConverter}, Mode=OneWay}">
+                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}" Text="Перевод:" />
+                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
+                                           Text="{x:Bind ViewModel.Title.Team.Translator, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
+                                           VerticalAlignment="Bottom" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}"
+                                        Visibility="{x:Bind ViewModel.Title.Team.Editing, Converter={StaticResource StringListToVisibilityConverter}, Mode=OneWay}">
+                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}" Text="Редактура:" />
+                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
+                                           Text="{x:Bind ViewModel.Title.Team.Editing, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
+                                           VerticalAlignment="Bottom" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}"
+                                        Visibility="{x:Bind ViewModel.Title.Team.Decor, Converter={StaticResource StringListToVisibilityConverter}, Mode=OneWay}">
+                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}" Text="Оформление:" />
+                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
+                                           Text="{x:Bind ViewModel.Title.Team.Decor, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
+                                           VerticalAlignment="Bottom" />
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
 
@@ -108,6 +178,11 @@
                 <TextBlock
                     Style="{ThemeResource BodyTextBlockStyle}"
                     Text="{x:Bind ViewModel.Title.Description, Mode=OneWay}" />
+
+                <TextBlock
+                    Margin="{StaticResource SmallTopBottomMargin}"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Франшизы" />
 
                 <TextBlock
                     Margin="{StaticResource SmallTopBottomMargin}"

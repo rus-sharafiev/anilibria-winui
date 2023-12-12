@@ -46,8 +46,8 @@
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate x:DataType="models:GroupedTitles">
                             <Grid Margin="0">
-                                <TextBlock Text='{x:Bind WeekDay}' 
-                                           Margin="12"
+                                <TextBlock Text='{x:Bind WeekDay}'
+                                           Margin="{StaticResource SmallTopMargin}"
                                            Style="{StaticResource HeaderTextBlockStyle}"/>
                             </Grid>
                         </DataTemplate>

@@ -453,6 +453,7 @@ public partial class Quality
 
 public partial class TypeClass
 {
+    [JsonProperty("full_string")]
     public string FullString
     {
         get; set;

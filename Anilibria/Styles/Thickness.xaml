@@ -9,6 +9,7 @@
     <Thickness x:Key="MediumTopBottomMargin">0,24,0,24</Thickness>
     <Thickness x:Key="MediumLeftRightMargin">24,0,24,0</Thickness>
     <Thickness x:Key="MediumBottomMargin">0,0,0,24</Thickness>
+    <Thickness x:Key="MediumLeftMargin">24,0,0,0</Thickness>
 
     <Thickness x:Key="SmallLeftMargin">12,0,0,0</Thickness>
     <Thickness x:Key="SmallLeftRightMargin">12,0,12,0</Thickness>
@@ -18,6 +19,7 @@
 
     <Thickness x:Key="XSmallLeftMargin">8,0,0,0</Thickness>
     <Thickness x:Key="XSmallTopMargin">0,8,0,0</Thickness>
+    <Thickness x:Key="XSmallRightMargin">0,0,8,0</Thickness>
     <Thickness x:Key="XSmallLeftTopRightBottomMargin">8,8,8,8</Thickness>
 
     <Thickness x:Key="XXSmallTopMargin">0,4,0,0</Thickness>
