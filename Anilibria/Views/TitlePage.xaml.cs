@@ -17,9 +17,10 @@ public sealed partial class TitlePage : Page
         ViewModel = App.GetService<TitleViewModel>();
         InitializeComponent();
 
+        ViewModel.VideoPlayerElement = VideoPlayer;
         ViewModel.PlayerContainer = PlayerContainer;
         ViewModel.VideoContainer = VideoContainer;
-        ViewModel.MediaPlaybackList.CurrentItemChanged += MediaPlaybackList_CurrentItemChanged;
+        ViewModel.DispatcherQueue = DispatcherQueue;
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -27,13 +28,4 @@ public sealed partial class TitlePage : Page
         base.OnNavigatedTo(e);
         this.RegisterElementForConnectedAnimation("listItemKey", titlePoster);
     }
-
-    private void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args) =>
-        DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, () =>
-        {
-            if (ViewModel.SelectedEpisode != (int)sender.CurrentItemIndex && (int)sender.CurrentItemIndex >= 0)
-            {
-                ViewModel.SelectedEpisode = (int)sender.CurrentItemIndex;
-            }
-        });
 }

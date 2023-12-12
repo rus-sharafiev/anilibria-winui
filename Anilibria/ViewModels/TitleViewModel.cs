@@ -9,37 +9,45 @@ using Microsoft.UI.Xaml.Controls;
 using Windows.Media.Core;
 using Microsoft.UI.Xaml;
 using Windows.Media.Playback;
+using Microsoft.UI.Dispatching;
+using Anilibria.Contracts.Services;
 
 namespace Anilibria.ViewModels;
 
 public partial class TitleViewModel : ObservableRecipient, INavigationAware
 {
     [ObservableProperty]
-    private Title? title;
+    private Title? _title;
 
     [ObservableProperty]
-    private Grid? playerContainer;
+    private MediaPlayerElement _videoPlayerElement = new();
 
     [ObservableProperty]
-    private Grid? videoContainer;
+    private Grid? _playerContainer;
 
     [ObservableProperty]
-    private MediaPlaybackList _mediaPlaybackList = new();
+    private Grid? _videoContainer;
 
     [ObservableProperty]
     private ObservableCollection<string> _episodesList = [];
 
     [ObservableProperty]
-    private QltString _qlt = QltString.HD;
-
-    [ObservableProperty]
     private int _selectedEpisode = 0;
 
-    private readonly IApiService _apiService;
+    [ObservableProperty]
+    private DispatcherQueue? _dispatcherQueue;
 
-    public TitleViewModel(IApiService apiService)
+    private readonly MediaPlayer _mediaPlayer = new();
+    private MediaPlaybackList _mediaPlaybackList = new();
+
+    private readonly IApiService _apiService;
+    private readonly IVideoQualitySelectorService _videoQualitySelectorService;
+
+    public TitleViewModel(IApiService apiService, IVideoQualitySelectorService videoQualitySelectorService)
     {
         _apiService = apiService;
+        _videoQualitySelectorService = videoQualitySelectorService;
+        _videoQualitySelectorService.QualityChanged += VideoQuality_QualityChanged;
     }
 
     #region Navigation
@@ -48,50 +56,102 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
         if (parameter is Title title)
         {
             Title = title;
-            CreateMediaPlaybackList(title);
+
+            // Create episodes list
+            foreach (var entry in title.Player.List)
+            {
+                var episode = entry.Value.Name is not null ? $". {entry.Value.Name}" : " серия";
+                EpisodesList.Add($"{entry.Value.Episode}{episode}");
+            }
+            CreateMediaPlaybackList();
         }
     }
 
     public void OnNavigatedFrom()
     {
-        PlayerContainer = null;
+        VideoPlayerElement.SetMediaPlayer(null);
+        _mediaPlayer.Dispose();
         VideoContainer = null;
-        MediaPlaybackList.Items.Clear();
     }
     #endregion
 
-    private void CreateMediaPlaybackList(Title title)
+    private void VideoQuality_QualityChanged(object? sender, EventArgs e) => CreateMediaPlaybackList(true);
+
+    private void CreateMediaPlaybackList(bool videoQualityChanged = false)
     {
-        MediaPlaybackList.Items.Clear();
-        foreach (var entry in title.Player.List)
+        if (Title is not null && VideoPlayerElement is not null)
         {
-            var episode = entry.Value.Name is not null ? $". {entry.Value.Name}" : " серия";
-            EpisodesList.Add($"{entry.Value.Episode}{episode}");
 
-            var qlt = Qlt switch
+            // Get curent player state
+            var selectedIndex = SelectedEpisode;
+            var isPlaying = false;
+            var playbackSessionPosition = TimeSpan.Zero;
+            if (videoQualityChanged)
             {
-                QltString.SD => entry.Value.Hls.Sd,
-                QltString.HD => entry.Value.Hls.Hd,
-                QltString.FHD => entry.Value.Hls.Fhd,
-                _ => null
-            };
-
-            if (qlt is not null)
-            {
-                var uri = new Uri(new Uri($"https://{title.Player.Host}"), qlt);
-                var mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(uri));
-                MediaPlaybackList.Items.Add(mediaPlaybackItem);
+                isPlaying = _mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing;
+                playbackSessionPosition = _mediaPlayer.PlaybackSession.Position;
             }
+
+            // Create new MediaPlaybackList
+            _mediaPlaybackList = new MediaPlaybackList { MaxPrefetchTime = TimeSpan.Zero };
+            foreach (var entry in Title.Player.List)
+            {
+                var hls = _videoQualitySelectorService.Qlt switch
+                {
+                    QltString.SD => entry.Value.Hls.Sd,
+                    QltString.HD => entry.Value.Hls.Hd,
+                    QltString.FHD => entry.Value.Hls.Fhd,
+                    _ => null
+                };
+
+                if (hls is not null)
+                {
+                    var uri = new Uri(new Uri($"https://{Title.Player.Host}"), hls);
+                    var mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(uri));
+                    _mediaPlaybackList.Items.Add(mediaPlaybackItem);
+                }
+            }
+            _mediaPlayer.Source = _mediaPlaybackList;
+            _mediaPlaybackList.CurrentItemChanged += MediaPlaybackList_CurrentItemChanged;
+            _mediaPlaybackList.ItemOpened += MediaPlaybackList_ItemOpened;
+            VideoPlayerElement.SetMediaPlayer(_mediaPlayer);
+
+            // Restore player state on video quality changed
+            if (videoQualityChanged)
+            {
+                _mediaPlaybackList.MoveTo((uint)selectedIndex);
+                _mediaPlayer.PlaybackSession.Position = playbackSessionPosition;
+                if (isPlaying)
+                {
+                    _mediaPlayer.Play();
+                }
+            }
+        }
+    }
+
+    private void MediaPlaybackList_ItemOpened(MediaPlaybackList sender, MediaPlaybackItemOpenedEventArgs args) =>
+        System.Diagnostics.Debug.WriteLine($"Item has been opened");
+
+    private void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+    {
+        var newItemIdex = sender.Items.IndexOf(args.NewItem);
+        System.Diagnostics.Debug.WriteLine($"Selected: {SelectedEpisode}, new: {newItemIdex}");
+        if (SelectedEpisode != newItemIdex && newItemIdex >= 0)
+        {
+            System.Diagnostics.Debug.WriteLine("CurrentItemChanged");
+            DispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Normal, () =>
+            {
+                SelectedEpisode = newItemIdex;
+            });
         }
     }
 
     public void EpisodesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs args)
     {
-        var comboBox = sender as ComboBox;
-        if (comboBox is not null && comboBox.SelectedIndex >= 0)
+        if (sender is ComboBox comboBox && comboBox.SelectedIndex != SelectedEpisode && comboBox.SelectedIndex >= 0)
         {
-            System.Diagnostics.Debug.WriteLine(comboBox.SelectedIndex);
-            MediaPlaybackList.MoveTo((uint)comboBox.SelectedIndex);
+            System.Diagnostics.Debug.WriteLine("SelectionChanged");
+            _mediaPlaybackList.MoveTo((uint)comboBox.SelectedIndex);
         }
     }
 

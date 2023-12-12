@@ -123,19 +123,20 @@
                         Margin="{StaticResource SmallRightMargin}"
                         ItemsSource="{x:Bind ViewModel.EpisodesList, Mode=OneWay}"
                         SelectedIndex="{x:Bind ViewModel.SelectedEpisode, Mode=OneWay}"
-                        SelectionChanged="{x:Bind ViewModel.EpisodesComboBox_SelectionChanged}"/>
+                        SelectionChanged="{x:Bind ViewModel.EpisodesComboBox_SelectionChanged, Mode=OneWay}"/>
+
+                    <!--<Button Click="{x:Bind ViewModel.StartOver, Mode=OneWay}" ClickMode="Press" Content="Start over" VerticalAlignment="Bottom"/>-->
 
                 </StackPanel>
 
                 <Grid x:Name="VideoContainer" Margin="{StaticResource SmallTopBottomMargin}">
                     <Grid x:Name="PlayerContainer" 
                         SizeChanged="{x:Bind ViewModel.PlayerContainer_SizeChanged, Mode=OneWay}"
-                        MaxWidth="800" CornerRadius="8"
+                        MaxWidth="800"
                         HorizontalAlignment="Left">
 
                         <MediaPlayerElement 
-                            x:Name="MediaPlayer"
-                            Source="{x:Bind ViewModel.MediaPlaybackList, Mode=OneWay}"
+                            x:Name="VideoPlayer"
                             AreTransportControlsEnabled="True"
                             IsFullWindow="True">
                             <MediaPlayerElement.TransportControls>
@@ -145,7 +146,6 @@
                                                                        IsSkipBackwardEnabled="True"
                                                                        IsNextTrackButtonVisible="True"
                                                                        IsPreviousTrackButtonVisible="True"
-                                                                       IsCompact="True"
                                                                        OnFullWindowClick="{x:Bind ViewModel.FullScreenButton_Click, Mode=OneWay}"/>
                             </MediaPlayerElement.TransportControls>
                         </MediaPlayerElement>

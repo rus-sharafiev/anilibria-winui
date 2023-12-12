@@ -219,6 +219,24 @@
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
+                            <!-- VideoQuality states -->
+                            <VisualStateGroup x:Name="VideoQualityStates">
+                                <VisualState x:Name="SdVideoQualityState">
+                                    <VisualState.Setters>
+                                        <Setter Target="VideoQualityFontIcon.Glyph" Value="SD" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="HdVideoQualityState">
+                                    <VisualState.Setters>
+                                        <Setter Target="VideoQualityFontIcon.Glyph" Value="HD" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="FhdVideoQualityState">
+                                    <VisualState.Setters>
+                                        <Setter Target="VideoQualityFontIcon.Glyph" Value="FHD" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                             <!-- Repeat states -->
                             <VisualStateGroup x:Name="RepeatStates">
                                 <VisualState x:Name="RepeatNoneState" />
@@ -441,6 +459,22 @@
                                                     <SymbolIcon x:Name="RepeatSymbol" Symbol="RepeatAll" />
                                                 </AppBarToggleButton.Icon>
                                             </AppBarToggleButton>
+
+                                            <AppBarButton x:Name="VideoQualityButton" 
+                                                          Style="{StaticResource AppBarButtonStyle}"
+                                                          MediaTransportControlsHelper.DropoutOrder="17">
+                                                <AppBarButton.Icon>
+                                                    <FontIcon FontFamily="Segoe UI" x:Name="VideoQualityFontIcon"/>
+                                                </AppBarButton.Icon>
+                                                <AppBarButton.Flyout>
+                                                    <MenuFlyout>
+                                                        <MenuFlyoutItem Text="FHD" x:Name="VideoQualityOptionFHD"/>
+                                                        <MenuFlyoutItem Text="HD" x:Name="VideoQualityOptionHD"/>
+                                                        <MenuFlyoutItem Text="SD" x:Name="VideoQualityOptionSD"/>
+                                                    </MenuFlyout>
+                                                </AppBarButton.Flyout>
+                                            </AppBarButton>
+                                            
                                             <AppBarButton x:Name='ZoomButton'
                                                           Style='{StaticResource AppBarButtonStyle}'
                                                           MediaTransportControlsHelper.DropoutOrder='9'>
@@ -448,12 +482,17 @@
                                                     <FontIcon Glyph="&#xE799;" />
                                                 </AppBarButton.Icon>
                                             </AppBarButton>
-                                            <AppBarButton x:Name="FullWindowButton" Style="{StaticResource AppBarButtonStyle}" MediaTransportControlsHelper.DropoutOrder="17">
+                                            
+                                            <AppBarButton x:Name="FullWindowButton" 
+                                                          Style="{StaticResource AppBarButtonStyle}" 
+                                                          MediaTransportControlsHelper.DropoutOrder="17">
                                                 <AppBarButton.Icon>
                                                     <SymbolIcon x:Name="FullWindowSymbol" Symbol="FullScreen" />
                                                 </AppBarButton.Icon>
                                             </AppBarButton>
+
                                         </CommandBar.PrimaryCommands>
+                                        
                                     </CommandBar>
                                 </Border>
                             </Grid>
