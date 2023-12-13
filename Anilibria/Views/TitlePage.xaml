@@ -5,16 +5,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkitconverters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:converters="using:Anilibria.Converters"
     xmlns:controls="using:Anilibria.Controls"
-    xmlns:models="using:Anilibria.Core.Models"
+    xmlns:models="using:Anilibria.Core.Models" 
+    xmlns:viewmodels="using:Anilibria.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:TitleViewModel}"
     mc:Ignorable="d">
 
     <Page.Resources>
         <converters:ImageSourceConverter x:Key="ImageSourceConverter"/>
         <converters:UnixTimeToStringConverter x:Key="UnixTimeToStringConverter" />
         <converters:StringListToStringConverter x:Key="StringListToStringConverter" />
+        <toolkitconverters:CollectionVisibilityConverter x:Key="CollectionVisibilityConverter" />
         <CollectionViewSource x:Key="FranchisesGroups"
                               Source="{x:Bind ViewModel.FranchisesGroups, Mode=OneWay}"
                               IsSourceGrouped="True"
