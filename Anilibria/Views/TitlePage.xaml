@@ -5,15 +5,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:converters="using:Anilibria.Converters"
     xmlns:controls="using:Anilibria.Controls"
+    xmlns:models="using:Anilibria.Core.Models"
     mc:Ignorable="d">
 
     <Page.Resources>
         <converters:ImageSourceConverter x:Key="ImageSourceConverter"/>
         <converters:UnixTimeToStringConverter x:Key="UnixTimeToStringConverter" />
         <converters:StringListToStringConverter x:Key="StringListToStringConverter" />
-        <converters:StringListToVisibilityConverter x:Name="StringListToVisibilityConverter" />
+        <CollectionViewSource x:Key="FranchisesGroups"
+                              Source="{x:Bind ViewModel.FranchisesGroups, Mode=OneWay}"
+                              IsSourceGrouped="True"
+                              ItemsPath="Titles"/>
     </Page.Resources>
 
     <Grid x:Name="ContentArea">
@@ -146,21 +151,21 @@
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
                                        Margin="{StaticResource SmallRightMargin}" Text="Работа над субтитрами" />
                             <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}"
-                                        Visibility="{x:Bind ViewModel.Title.Team.Translator, Converter={StaticResource StringListToVisibilityConverter}, Mode=OneWay}">
+                                        Visibility="{x:Bind ViewModel.Title.Team.Translator, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}">
                                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}" Text="Перевод:" />
                                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
                                            Text="{x:Bind ViewModel.Title.Team.Translator, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
                                            VerticalAlignment="Bottom" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}"
-                                        Visibility="{x:Bind ViewModel.Title.Team.Editing, Converter={StaticResource StringListToVisibilityConverter}, Mode=OneWay}">
+                                        Visibility="{x:Bind ViewModel.Title.Team.Editing, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}">
                                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}" Text="Редактура:" />
                                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
                                            Text="{x:Bind ViewModel.Title.Team.Editing, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
                                            VerticalAlignment="Bottom" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}"
-                                        Visibility="{x:Bind ViewModel.Title.Team.Decor, Converter={StaticResource StringListToVisibilityConverter}, Mode=OneWay}">
+                                        Visibility="{x:Bind ViewModel.Title.Team.Decor, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}">
                                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}" Text="Оформление:" />
                                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
                                            Text="{x:Bind ViewModel.Title.Team.Decor, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
@@ -177,37 +182,64 @@
                     Text="Описание" />
                 <TextBlock
                     Style="{ThemeResource BodyTextBlockStyle}"
-                    Text="{x:Bind ViewModel.Title.Description, Mode=OneWay}" />
+                    Text="{x:Bind ViewModel.Title.Description, Mode=OneWay}"
+                    Margin="{StaticResource XSmallLeftMargin}"/>
+
+                <GridView ItemsSource="{Binding Source={StaticResource FranchisesGroups}}"
+                          SelectionMode="None"
+                          IsItemClickEnabled="True"
+                          ItemClick="{x:Bind ViewModel.OnItemClick}"
+                          Padding="{StaticResource XSmallLeftTopRightBottomMargin}">
+
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Title">
+                            <Grid Width="100" x:Name="itemPoster">
+                                <Image>
+                                    <Image.Source>
+                                        <BitmapImage UriSource="{x:Bind Posters.Small.Url, Converter={StaticResource ImageSourceConverter}}"
+                                                     DecodePixelWidth="100" DecodePixelType="Logical"/>
+                                    </Image.Source>
+                                </Image>
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+
+                    <GridView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate x:DataType="models:GroupedTitles">
+                                    <TextBlock Text='{x:Bind GroupTitle}'
+                                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                            <GroupStyle.HeaderContainerStyle>
+                                <Style TargetType="GridViewHeaderItem">
+                                    <Setter Property="Template" Value="{StaticResource GridViewHeaderItemWithoutDivider}" />
+                                    <Setter Property="Padding" Value="-8,12,0,0" />
+                                </Style>
+                            </GroupStyle.HeaderContainerStyle>
+                        </GroupStyle>
+                    </GridView.GroupStyle>
+
+                </GridView>
 
                 <TextBlock
-                    Margin="{StaticResource SmallTopBottomMargin}"
-                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="Франшизы" />
-
-                <TextBlock
-                    Margin="{StaticResource SmallTopBottomMargin}"
+                    Margin="{StaticResource SmallTopMargin}"
                     Style="{ThemeResource SubtitleTextBlockStyle}"
                     Text="Видео" />
 
-                <StackPanel Orientation="Horizontal">
+                <ComboBox 
+                    x:Name="EpisodesComboBox"
+                    Header="Список эпизодов"
+                    MinWidth="400"
+                    Margin="{StaticResource XSmallLeftMargin}"
+                    ItemsSource="{x:Bind ViewModel.EpisodesList, Mode=OneWay}"
+                    SelectedIndex="{x:Bind ViewModel.SelectedEpisode, Mode=OneWay}"
+                    SelectionChanged="{x:Bind ViewModel.EpisodesComboBox_SelectionChanged, Mode=OneWay}"/>
 
-                    <ComboBox 
-                        x:Name="EpisodesComboBox"
-                        Header="Список эпизодов"
-                        MinWidth="400"
-                        Margin="{StaticResource SmallRightMargin}"
-                        ItemsSource="{x:Bind ViewModel.EpisodesList, Mode=OneWay}"
-                        SelectedIndex="{x:Bind ViewModel.SelectedEpisode, Mode=OneWay}"
-                        SelectionChanged="{x:Bind ViewModel.EpisodesComboBox_SelectionChanged, Mode=OneWay}"/>
-
-                    <!--<Button Click="{x:Bind ViewModel.StartOver, Mode=OneWay}" ClickMode="Press" Content="Start over" VerticalAlignment="Bottom"/>-->
-
-                </StackPanel>
-
-                <Grid x:Name="VideoContainer" Margin="{StaticResource SmallTopBottomMargin}">
+                <Grid x:Name="VideoContainer" Margin="{StaticResource XSmallLeftTopRightBottomMargin}">
                     <Grid x:Name="PlayerContainer" 
                         SizeChanged="{x:Bind ViewModel.PlayerContainer_SizeChanged, Mode=OneWay}"
-                        MaxWidth="800"
                         HorizontalAlignment="Left">
 
                         <MediaPlayerElement 

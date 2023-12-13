@@ -32,6 +32,9 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
     private ObservableCollection<string> _episodesList = [];
 
     [ObservableProperty]
+    private ObservableCollection<GroupedTitles> _franchisesGroups = [];
+
+    [ObservableProperty]
     private int _selectedEpisode = 0;
 
     [ObservableProperty]
@@ -41,13 +44,14 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
     private MediaPlaybackList _mediaPlaybackList = new();
 
     private readonly IApiService _apiService;
+    private readonly INavigationService _navigationService;
     private readonly IVideoQualitySelectorService _videoQualitySelectorService;
 
-    public TitleViewModel(IApiService apiService, IVideoQualitySelectorService videoQualitySelectorService)
+    public TitleViewModel(IApiService apiService, IVideoQualitySelectorService videoQualitySelectorService, INavigationService navigationService)
     {
         _apiService = apiService;
         _videoQualitySelectorService = videoQualitySelectorService;
-        _videoQualitySelectorService.QualityChanged += VideoQuality_QualityChanged;
+        _navigationService = navigationService;
     }
 
     #region Navigation
@@ -56,6 +60,7 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
         if (parameter is Title title)
         {
             Title = title;
+            GetFranchises(title);
 
             // Create episodes list
             foreach (var entry in title.Player.List)
@@ -64,14 +69,45 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
                 EpisodesList.Add($"{entry.Value.Episode}{episode}");
             }
             CreateMediaPlaybackList();
+            _videoQualitySelectorService.QualityChanged += VideoQuality_QualityChanged;
         }
     }
 
     public void OnNavigatedFrom()
     {
+        _videoQualitySelectorService.QualityChanged -= VideoQuality_QualityChanged;
         VideoPlayerElement.SetMediaPlayer(null);
         _mediaPlayer.Dispose();
         VideoContainer = null;
+    }
+    #endregion
+
+    #region Franchises
+    private async void GetFranchises(Title title)
+    {
+        foreach (var franchise in title.Franchises)
+        {
+            var releases = new ObservableCollection<Title>();
+            foreach (var release in franchise.Releases)
+            {
+                var releaseTitle = await _apiService.GetTitleAsync(release.Id);
+                releases.Add(releaseTitle);
+            }
+            FranchisesGroups.Add(new GroupedTitles
+            {
+                GroupTitle = $"Порядок просмотра фрашизы {franchise.Franchise.Name}",
+                Titles = releases
+            });
+        }
+    }
+
+    public void OnItemClick(object _, ItemClickEventArgs e)
+    {
+        var title = e.ClickedItem as Title;
+        if (title is not null && title != Title)
+        {
+            _navigationService.NavigateTo(typeof(TitleViewModel).FullName!, title);
+        }
     }
     #endregion
 
@@ -113,7 +149,6 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
             }
             _mediaPlayer.Source = _mediaPlaybackList;
             _mediaPlaybackList.CurrentItemChanged += MediaPlaybackList_CurrentItemChanged;
-            _mediaPlaybackList.ItemOpened += MediaPlaybackList_ItemOpened;
             VideoPlayerElement.SetMediaPlayer(_mediaPlayer);
 
             // Restore player state on video quality changed
@@ -129,16 +164,11 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    private void MediaPlaybackList_ItemOpened(MediaPlaybackList sender, MediaPlaybackItemOpenedEventArgs args) =>
-        System.Diagnostics.Debug.WriteLine($"Item has been opened");
-
     private void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
     {
         var newItemIdex = sender.Items.IndexOf(args.NewItem);
-        System.Diagnostics.Debug.WriteLine($"Selected: {SelectedEpisode}, new: {newItemIdex}");
         if (SelectedEpisode != newItemIdex && newItemIdex >= 0)
         {
-            System.Diagnostics.Debug.WriteLine("CurrentItemChanged");
             DispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Normal, () =>
             {
                 SelectedEpisode = newItemIdex;
@@ -150,7 +180,6 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
     {
         if (sender is ComboBox comboBox && comboBox.SelectedIndex != SelectedEpisode && comboBox.SelectedIndex >= 0)
         {
-            System.Diagnostics.Debug.WriteLine("SelectionChanged");
             _mediaPlaybackList.MoveTo((uint)comboBox.SelectedIndex);
         }
     }

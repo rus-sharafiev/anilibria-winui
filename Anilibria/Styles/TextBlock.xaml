@@ -17,4 +17,19 @@
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
+    <ControlTemplate x:Key="GridViewHeaderItemWithoutDivider" TargetType="GridViewHeaderItem">
+        <StackPanel Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}" 
+                        CornerRadius="{TemplateBinding CornerRadius}">
+            <ContentPresenter x:Name="ContentPresenter"
+                                  Margin="{TemplateBinding Padding}"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </StackPanel>
+    </ControlTemplate>
+
 </ResourceDictionary>
