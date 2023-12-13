@@ -20,7 +20,7 @@ public class GroupedTitles
 {
     public GroupedTitles() => Titles = new ObservableCollection<Title>();
 
-    public string WeekDay
+    public string GroupTitle
     {
         get; set;
     }

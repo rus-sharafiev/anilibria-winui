@@ -3,9 +3,7 @@ using Anilibria.Contracts.Services;
 using Anilibria.Contracts.ViewModels;
 using Anilibria.Core.Contracts.Services;
 using Anilibria.Core.Models;
-using Anilibria.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace Anilibria.ViewModels;
@@ -19,7 +17,10 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
     private bool isLoading = false;
 
     [ObservableProperty]
-    private ObservableCollection<GroupedTitles> titlesGroups = new();
+    private ObservableCollection<GroupedTitles> titlesGroups = [];
+
+    [ObservableProperty]
+    private string? _connectionError;
 
     public ScheduleViewModel(IApiService apiService, INavigationService navigationService)
     {
@@ -29,11 +30,17 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
 
     public async void OnNavigatedTo(object parameter)
     {
-        IsLoading = true;
-        List<TitlesByDay> data;
+        IsLoading = true; 
+        ConnectionError = null;
+        List<TitlesByDay> data = [];
         try
         {
             data = await _apiService.GetScheduleAsync();
+        }
+        catch (Exception e)
+        {
+            System.Diagnostics.Debug.WriteLine($"Processing failed: {e.Message}");
+            ConnectionError = e.Message;
         }
         finally
         {
@@ -45,7 +52,7 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
         {
             var newGroup = new GroupedTitles
             {
-                WeekDay = item.Day switch
+                GroupTitle = item.Day switch
                 {
                     0 => "Понедельник",
                     1 => "Вторник",
@@ -62,7 +69,7 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    public void OnItemClick(object sender, ItemClickEventArgs e)
+    public void OnItemClick(object _, ItemClickEventArgs e)
     {
         var title = e.ClickedItem as Title;
         if (title is not null)

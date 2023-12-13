@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:converters="using:Anilibria.Converters"
+    xmlns:toolkitconverters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:models="using:Anilibria.Core.Models"
     mc:Ignorable="d">
 
@@ -16,6 +17,7 @@
                               ItemsPath="Titles"/>
 
         <converters:ImageSourceConverter x:Key="ImageSourceConverter"/>
+        <toolkitconverters:StringVisibilityConverter x:Key="StringVisibilityConverter" />
     </Page.Resources>
 
     <Grid>
@@ -46,7 +48,7 @@
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate x:DataType="models:GroupedTitles">
                             <Grid Margin="0">
-                                <TextBlock Text='{x:Bind WeekDay}'
+                                <TextBlock Text='{x:Bind GroupTitle}'
                                            Margin="{StaticResource SmallTopMargin}"
                                            Style="{StaticResource HeaderTextBlockStyle}"/>
                             </Grid>
@@ -58,5 +60,13 @@
         </GridView>
 
         <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
+
+        <StackPanel Visibility="{x:Bind ViewModel.ConnectionError, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}"
+                    VerticalAlignment="Center" HorizontalAlignment="Center">
+            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe783;" FontSize="48"/>
+            <TextBlock Text="Ошибка запроса" Style="{StaticResource TitleTextBlockStyle}"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Text="{x:Bind ViewModel.ConnectionError, Mode=OneWay}" />
+        </StackPanel>
     </Grid>
 </Page>
