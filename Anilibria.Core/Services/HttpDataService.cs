@@ -80,6 +80,15 @@ public class HttpDataService : IHttpDataService
         return response.IsSuccessStatusCode;
     }
 
+    public async Task<T> PostAsFormEncodeAsync<T>(string uri, List<KeyValuePair<string, string>> list)
+    {
+        var response = await client.PostAsync(uri, new FormUrlEncodedContent(list));
+        response.EnsureSuccessStatusCode();
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        return await Task.Run(() => JsonConvert.DeserializeObject<T>(responseBody));
+    }
+
     public async Task<bool> PutAsync<T>(string uri, T item)
     {
         if (item == null)
