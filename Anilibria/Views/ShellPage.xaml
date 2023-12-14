@@ -3,25 +3,50 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:helpers="using:Anilibria.Helpers"
-    xmlns:behaviors="using:Anilibria.Behaviors"
-    xmlns:i="using:Microsoft.Xaml.Interactivity"
     Loaded="OnLoaded">
 
     <Grid>
+        
         <Grid x:Name="AppTitleBar"
               Canvas.ZIndex="1"
               Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
               IsHitTestVisible="True"
               VerticalAlignment="Top">
-            <Image Source="/Assets/WindowIcon.ico"
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
+                <ColumnDefinition x:Name="TitleColumn" Width="Auto"/>
+                <ColumnDefinition x:Name="LeftDragColumn" Width="*" MinWidth="12"/>
+                <ColumnDefinition x:Name="SearchColumn" Width="4*" MinWidth="160"/>
+                <ColumnDefinition x:Name="RightDragColumn" Width="*" MinWidth="12"/>
+                <ColumnDefinition x:Name="AccountColumn" Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Image x:Name="AppTitleBarIcon"
+                   Grid.Column="0"
+                   Source="/Assets/WindowIcon.ico"
                    HorizontalAlignment="Left"
                    Width="16"
                    Height="16" />
+
             <TextBlock x:Name="AppTitleBarText"
+                       Grid.Column="1"
                        VerticalAlignment="Center"
                        TextWrapping="NoWrap"
                        Style="{StaticResource CaptionTextBlockStyle}"
-                       Margin="28,0,0,0"/>
+                       Margin="{StaticResource XSmallLeftMargin}"/>
+
+            <AutoSuggestBox x:Name="AppTitleBarSearchBox" 
+                            Grid.Column="3" 
+                            QueryIcon="Find"
+                            x:Uid="TitleBarSearchBox"
+                            VerticalAlignment="Center"
+                            MaxWidth="380"/>
+            
+            <PersonPicture x:Name="PersonPic" 
+                           Grid.Column="5" 
+                           Height="32" Margin="0,0,16,0"/>
+            
         </Grid>
         <NavigationView
             x:Name="NavigationViewControl"
