@@ -1,10 +1,8 @@
+using Anilibria.Core.Models;
 using Anilibria.ViewModels;
-
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-
 using CommunityToolkit.WinUI.UI.Animations;
-using Windows.Media.Playback;
 
 namespace Anilibria.Views;
 
@@ -26,6 +24,9 @@ public sealed partial class TitlePage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        this.RegisterElementForConnectedAnimation("listItemKey", titlePoster);
+        if (e.Parameter is Title title && title.IsAnimationAllowed)
+        {
+            this.RegisterElementForConnectedAnimation("listItemKey", titlePoster);
+        }
     }
 }

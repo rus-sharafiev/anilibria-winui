@@ -77,6 +77,14 @@ public class Title
     {
         get; set;
     }
+    public bool IsCurrentTitle
+    {
+        get; set;
+    }
+    public bool IsAnimationAllowed
+    {
+        get; set;
+    } = true;
 }
 
 public partial class Blocked
