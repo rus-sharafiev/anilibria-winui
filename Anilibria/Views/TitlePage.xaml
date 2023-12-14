@@ -9,8 +9,7 @@
     xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:converters="using:Anilibria.Converters"
     xmlns:controls="using:Anilibria.Controls"
-    xmlns:models="using:Anilibria.Core.Models" 
-    xmlns:viewmodels="using:Anilibria.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:TitleViewModel}"
+    xmlns:models="using:Anilibria.Core.Models"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -90,7 +89,7 @@
                         x:Name="title"
                         RelativePanel.Below="titlePoster"
                         Style="{ThemeResource TitleTextBlockStyle}"
-                        Margin="{StaticResource SmallLeftRightMargin}"
+                        Margin="{StaticResource SmallLeftRightBottomMargin}"
                         Text="{x:Bind ViewModel.Title.Names.Ru, Mode=OneWay}" />
 
                     <StackPanel x:Name="infoGroup" RelativePanel.Below="title" Width="180">
@@ -150,7 +149,8 @@
                                        VerticalAlignment="Bottom" />
                         </StackPanel>
 
-                        <StackPanel x:Name="decorGroup" Margin="{StaticResource SmallTopMargin}">
+                        <StackPanel x:Name="subtitlesGroup" Margin="{StaticResource SmallTopMargin}" 
+                                    Visibility="{x:Bind ViewModel.SubtitlesGroupVisibility, Mode=OneWay}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
                                        Margin="{StaticResource SmallRightMargin}" Text="Работа над субтитрами" />
                             <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}"
@@ -191,12 +191,12 @@
                 <GridView ItemsSource="{Binding Source={StaticResource FranchisesGroups}}"
                           SelectionMode="None"
                           IsItemClickEnabled="True"
-                          ItemClick="{x:Bind ViewModel.OnItemClick}"
+                          ItemClick="{x:Bind ViewModel.OnItemClick, Mode=OneWay}"
                           Padding="{StaticResource XSmallLeftTopRightBottomMargin}">
 
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="models:Title">
-                            <Grid Width="100" x:Name="itemPoster">
+                            <Grid Width="100" MinHeight="140" x:Name="franchiseItemPoster">
                                 <Image>
                                     <Image.Source>
                                         <BitmapImage UriSource="{x:Bind Posters.Small.Url, Converter={StaticResource ImageSourceConverter}}"
@@ -240,10 +240,11 @@
                     SelectedIndex="{x:Bind ViewModel.SelectedEpisode, Mode=OneWay}"
                     SelectionChanged="{x:Bind ViewModel.EpisodesComboBox_SelectionChanged, Mode=OneWay}"/>
 
-                <Grid x:Name="VideoContainer" Margin="{StaticResource XSmallLeftTopRightBottomMargin}">
+                <Grid x:Name="VideoContainer" 
+                      Margin="{StaticResource XSmallLeftTopRightBottomMargin}">
                     <Grid x:Name="PlayerContainer" 
-                        SizeChanged="{x:Bind ViewModel.PlayerContainer_SizeChanged, Mode=OneWay}"
-                        HorizontalAlignment="Left">
+                          SizeChanged="{x:Bind ViewModel.PlayerContainer_SizeChanged, Mode=OneWay}"
+                          HorizontalAlignment="Left">
 
                         <MediaPlayerElement 
                             x:Name="VideoPlayer"
@@ -259,7 +260,6 @@
                                                                        OnFullWindowClick="{x:Bind ViewModel.FullScreenButton_Click, Mode=OneWay}"/>
                             </MediaPlayerElement.TransportControls>
                         </MediaPlayerElement>
-
                     </Grid>
                 </Grid>
 

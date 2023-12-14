@@ -26,13 +26,13 @@
                   SelectionMode="None"
                   IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.OnItemClick}"
-                  Padding="{StaticResource NavigationViewPageContentMargin}"
+                  Padding="{StaticResource SchedulePageContentPadding}"
                   animations:Connected.ListItemElementName="itemPoster"
                   animations:Connected.ListItemKey="listItemKey">
 
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="models:Title">
-                    <Grid Width="150" x:Name="itemPoster">
+                    <Grid Width="150" x:Name="itemPoster" CornerRadius="4">
                         <Image>
                             <Image.Source>
                                 <BitmapImage UriSource="{x:Bind Posters.Small.Url, Converter={StaticResource ImageSourceConverter}}"
@@ -63,10 +63,16 @@
 
         <StackPanel Visibility="{x:Bind ViewModel.ConnectionError, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}"
                     VerticalAlignment="Center" HorizontalAlignment="Center">
-            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe783;" FontSize="48"/>
+            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe783;" FontSize="68"
+                      Margin="{StaticResource SmallTopBottomMargin}"/>
             <TextBlock Text="Ошибка запроса" Style="{StaticResource TitleTextBlockStyle}"
-                       HorizontalAlignment="Center"/>
+                       HorizontalAlignment="Center"
+                       Margin="{StaticResource SmallTopBottomMargin}"/>
             <TextBlock Text="{x:Bind ViewModel.ConnectionError, Mode=OneWay}" />
+            <Button Content="Повторить" 
+                    Click="{x:Bind ViewModel.LoadSchedule, Mode=OneWay}" ClickMode="Press" 
+                    Margin="{StaticResource SmallTopBottomMargin}"
+                    HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </Page>

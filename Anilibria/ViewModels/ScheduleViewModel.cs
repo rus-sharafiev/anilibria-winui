@@ -28,9 +28,9 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
         _navigationService = navigationService;
     }
 
-    public async void OnNavigatedTo(object parameter)
+    public async void LoadSchedule()
     {
-        IsLoading = true; 
+        IsLoading = true;
         ConnectionError = null;
         List<TitlesByDay> data = [];
         try
@@ -39,8 +39,7 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
         }
         catch (Exception e)
         {
-            System.Diagnostics.Debug.WriteLine($"Processing failed: {e.Message}");
-            ConnectionError = e.Message;
+            ConnectionError = e.InnerException?.Message ?? e.Message;
         }
         finally
         {
@@ -69,10 +68,14 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
         }
     }
 
+    public void OnNavigatedTo(object parameter)
+    {
+        LoadSchedule();
+    }
+
     public void OnItemClick(object _, ItemClickEventArgs e)
     {
-        var title = e.ClickedItem as Title;
-        if (title is not null)
+        if (e.ClickedItem is Title title)
         {
             _navigationService.NavigateTo(typeof(TitleViewModel).FullName!, title);
         }

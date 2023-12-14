@@ -38,6 +38,9 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
     private int _selectedEpisode = 0;
 
     [ObservableProperty]
+    private Visibility _subtitlesGroupVisibility = Visibility.Visible;
+
+    [ObservableProperty]
     private DispatcherQueue? _dispatcherQueue;
 
     private readonly MediaPlayer _mediaPlayer = new();
@@ -68,6 +71,16 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
                 var episode = entry.Value.Name is not null ? $". {entry.Value.Name}" : " серия";
                 EpisodesList.Add($"{entry.Value.Episode}{episode}");
             }
+
+            // Subtitles team group visibility
+            if (Title.Team.Translator.Length == 0 &&
+                Title.Team.Editing.Length == 0 &&
+                Title.Team.Decor.Length == 0)
+            {
+                SubtitlesGroupVisibility = Visibility.Collapsed;
+            }
+
+            // Create playback list for the media player
             CreateMediaPlaybackList();
             _videoQualitySelectorService.QualityChanged += VideoQuality_QualityChanged;
         }
@@ -90,8 +103,16 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
             var releases = new ObservableCollection<Title>();
             foreach (var release in franchise.Releases)
             {
-                var releaseTitle = await _apiService.GetTitleAsync(release.Id);
-                releases.Add(releaseTitle);
+                try
+                {
+                    var releaseTitle = await _apiService.GetTitleAsync(release.Id);
+                    releaseTitle.IsCurrentTitle = releaseTitle.Id == title.Id;
+                    releases.Add(releaseTitle);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex);
+                }
             }
             FranchisesGroups.Add(new GroupedTitles
             {
@@ -104,8 +125,9 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
     public void OnItemClick(object _, ItemClickEventArgs e)
     {
         var title = e.ClickedItem as Title;
-        if (title is not null && title != Title)
+        if (title is not null && !title.IsCurrentTitle)
         {
+            title.IsAnimationAllowed = false;
             _navigationService.NavigateTo(typeof(TitleViewModel).FullName!, title);
         }
     }
@@ -176,7 +198,7 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    public void EpisodesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs args)
+    public void EpisodesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs _)
     {
         if (sender is ComboBox comboBox && comboBox.SelectedIndex != SelectedEpisode && comboBox.SelectedIndex >= 0)
         {
