@@ -9,4 +9,6 @@ public interface IApiService
     Task<Title> GetTitleAsync(long id);
 
     Task<UserData> GetUserAsync(string session);
+
+    Task<TitlesSearchResult> SearchTitles(string queryString);
 }

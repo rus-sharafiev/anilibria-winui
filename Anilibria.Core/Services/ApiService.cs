@@ -30,6 +30,11 @@ public class ApiService : IApiService
         return _releaseData;
     }
 
+    public async Task<TitlesSearchResult> SearchTitles(string queryString)
+    {
+        return await _instance.GetAsync<TitlesSearchResult>($"/title/search?search={queryString}&order_by=names.ru");
+    }
+
     public async Task<UserData> GetUserAsync(string session)
     {
         return await _instance.GetAsync<UserData>($"user?session={session}");

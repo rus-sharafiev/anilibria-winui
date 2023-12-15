@@ -134,4 +134,20 @@ public sealed partial class ShellPage : Page
         args.Handled = result;
     }
     #endregion
+
+    #region AppTitleBarSearchBox events
+    private void TitleBarSearchBoxButton_Click(object sender, RoutedEventArgs e)
+    {
+        TitleBarSearchBoxButton.Visibility = Visibility.Collapsed;
+        TitleBarAutoSuggestBox.Opacity = 1.0;
+        TitleBarAutoSuggestBox.Focus(FocusState.Pointer);
+    }
+
+    private void TitleBarAutoSuggestBox_LosingFocus(UIElement sender, LosingFocusEventArgs args)
+    {
+        TitleBarAutoSuggestBox.Opacity = 0;
+        TitleBarAutoSuggestBox.Text = string.Empty;
+        TitleBarSearchBoxButton.Visibility = Visibility.Visible;
+    }
+    #endregion
 }

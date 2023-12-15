@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:helpers="using:Anilibria.Helpers"
+    xmlns:models="using:Anilibria.Core.Models"
     Loaded="OnLoaded">
 
     <Grid>
@@ -36,16 +37,59 @@
                        Style="{StaticResource CaptionTextBlockStyle}"
                        Margin="{StaticResource XSmallLeftMargin}"/>
 
-            <AutoSuggestBox x:Name="AppTitleBarSearchBox" 
-                            Grid.Column="3" 
-                            QueryIcon="Find"
-                            x:Uid="TitleBarSearchBox"
-                            VerticalAlignment="Center"
-                            MaxWidth="380"/>
-            
-            <PersonPicture x:Name="PersonPic" 
-                           Grid.Column="5" 
-                           Height="32" Margin="0,0,16,0"/>
+            <Grid x:Name="AppTitleBarSearchBox"
+                  Grid.Column="3" 
+                  MaxWidth="480">
+
+                <AutoSuggestBox x:Name="TitleBarAutoSuggestBox" 
+                                QueryIcon="Find" VerticalAlignment="Center" Opacity="0"
+                                LosingFocus="TitleBarAutoSuggestBox_LosingFocus"
+                                ItemsSource="{x:Bind ViewModel.AutoSuggestionBoxItemsSource, Mode=OneWay}"
+                                TextChanged="{x:Bind ViewModel.SuggestBox_TextChanged, Mode=OneWay}"
+                                QuerySubmitted="{x:Bind ViewModel.SuggestBox_QuerySubmitted, Mode=OneWay}"
+                                SuggestionChosen="{x:Bind ViewModel.SuggestBox_SuggestionChosen, Mode=OneWay}">
+                    
+                    <AutoSuggestBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:Title">
+                            <TextBlock Text="{x:Bind Names.Ru}" />
+                        </DataTemplate>
+                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
+
+                <Button x:Name="TitleBarSearchBoxButton"
+                        HorizontalAlignment="Stretch" 
+                        HorizontalContentAlignment="Stretch"
+                        ClickMode="Press" Click="TitleBarSearchBoxButton_Click">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*" MinWidth="12"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" x:Uid="TitleBarSearchBoxButton" 
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <FontIcon Grid.Column="2" 
+                                  FontFamily="{StaticResource SymbolThemeFontFamily}" 
+                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                  FontSize="12" Glyph="&#xe721;" 
+                                  Margin="0,0,1,0"/>
+                    </Grid>
+                </Button>
+
+            </Grid>
+
+            <Grid x:Name="PersonPic" 
+                  Grid.Column="5" 
+                  Margin="0,0,16,0">
+
+                <PersonPicture VerticalAlignment="Center" HorizontalAlignment="Center"
+                               Height="32" />
+
+                <Button CornerRadius="16" Width="32" Height="32" 
+                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Grid>
             
         </Grid>
         <NavigationView
@@ -70,6 +114,16 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
+
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem x:Uid="Shell_Title" helpers:NavigationHelper.NavigateTo="Anilibria.ViewModels.TitleViewModel"
+                                    IsEnabled="{x:Bind ViewModel.IsTitleNavigationViewItemEnabled, Mode=OneWay}" Opacity="0"
+                                    IsEnabledChanged="{x:Bind ViewModel.IsTitleNavigationViewItemEnabledChanged, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe787;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>
 
             <Frame x:Name="NavigationFrame" />
             

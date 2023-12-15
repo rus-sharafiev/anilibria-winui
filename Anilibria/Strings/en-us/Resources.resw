@@ -156,7 +156,10 @@
   <data name="SettingsPage_PrivacyTermsLink.NavigateUri" xml:space="preserve">
     <value>https://YourPrivacyUrlGoesHere/</value>
   </data>
-  <data name="TitleBarSearchBox.PlaceholderText" xml:space="preserve">
+  <data name="TitleBarSearchBoxButton.Text" xml:space="preserve">
     <value>Найти аниме по названию</value>
+  </data>
+  <data name="Shell_Title.Content" xml:space="preserve">
+    <value>Тайтл</value>
   </data>
 </root>
