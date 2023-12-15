@@ -1,9 +1,21 @@
-﻿using Newtonsoft.Json;
+﻿using System.Xml.Linq;
+using Newtonsoft.Json;
 
 namespace Anilibria.Core.Models;
 
-public class Title
+public class Title : IEquatable<Title>
 {
+    public bool Equals(Title other)
+    {
+        if (other is null)
+            return false;
+
+        return Id == other.Id;
+    }
+
+    public override bool Equals(object obj) => Equals(obj as Title);
+    public override int GetHashCode() => (Id).GetHashCode();
+
     public long Id
     {
         get; set;
@@ -309,7 +321,7 @@ public partial class Medium
 
 public partial class Season
 {
-    public SeasonString String
+    public string String
     {
         get; set;
     }
