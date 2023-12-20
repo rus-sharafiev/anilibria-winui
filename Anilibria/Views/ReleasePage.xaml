@@ -185,7 +185,7 @@
                     Text="Описание" />
                 <TextBlock
                     Style="{ThemeResource BodyTextBlockStyle}"
-                    Text="{x:Bind ViewModel.Release.Description, Mode=OneWay}"
+                    Text="{x:Bind ViewModel.ReleaseDescription, Mode=OneWay}"
                     Margin="{StaticResource XSmallLeftMargin}"/>
 
                 <GridView ItemsSource="{Binding Source={StaticResource FranchisesGroups}}"

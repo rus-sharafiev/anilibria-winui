@@ -20,6 +20,9 @@ public partial class ReleaseViewModel : ObservableRecipient, INavigationAware
     private Release? _release;
 
     [ObservableProperty]
+    private string? _releaseDescription;
+
+    [ObservableProperty]
     private MediaPlayerElement _videoPlayerElement = new();
 
     [ObservableProperty]
@@ -64,6 +67,10 @@ public partial class ReleaseViewModel : ObservableRecipient, INavigationAware
         {
             Release = release;
             GetFranchises(release);
+
+            // Format description
+            ReleaseDescription = release.Description.Replace("<br>", "");
+            ReleaseDescription = ReleaseDescription.Split(["Порядок просмотра франшизы"], StringSplitOptions.RemoveEmptyEntries).First();
 
             // Create episodes list
             foreach (var episode in release.Playlist.Reverse())
