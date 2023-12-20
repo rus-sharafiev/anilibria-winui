@@ -1,0 +1,36 @@
+﻿<Page
+    x:Class="Anilibria.Views.AccountPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid x:Name="ContentArea" Margin="{StaticResource NavigationViewPageContentMargin}">
+        <TextBlock x:Uid="Account_Header" Style="{StaticResource HeaderTextBlockStyle}" />
+
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="400"
+                    Visibility="{x:Bind ViewModel.FormVisibility, Mode=OneWay}">
+            <TextBox x:Name="Login" Width="360"
+                     x:Uid="Account_LoginTextBox" Margin="{StaticResource SmallTopBottomMargin}"/>
+            <PasswordBox x:Name="Password" Width="360"
+                         x:Uid="Account_PasswordTextBox" Margin="{StaticResource SmallTopBottomMargin}"/>
+            <Button x:Name="LoginSubmitButton" x:Uid="Account_LoginSubmitButton"
+                    Click="LoginSubmitButton_Click" ClickMode="Press"
+                    HorizontalAlignment="Right"
+                    Margin="{StaticResource MediumTopMargin}"/>
+        </StackPanel>
+
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="400"
+                    Visibility="{x:Bind ViewModel.UserDataVisibility, Mode=OneWay}">
+
+
+            <TextBlock Text="{x:Bind ViewModel.User.Login}" />
+            <Button x:Uid="Account_LogOutButton"
+                    Click="{x:Bind ViewModel.LogOut, Mode=OneWay}" ClickMode="Press"
+                    HorizontalAlignment="Right"
+                    Margin="{StaticResource MediumTopMargin}"/>
+        </StackPanel>
+
+    </Grid>
+</Page>

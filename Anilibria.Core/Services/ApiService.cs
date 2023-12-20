@@ -1,42 +1,81 @@
 ﻿using Anilibria.Core.Contracts.Services;
 using Anilibria.Core.Models;
+using System.Net;
 
 namespace Anilibria.Core.Services;
 
 public class ApiService : IApiService
 {
-    private readonly HttpDataService _instance = new("https://api.anilibria.srrlab.ru");
+    private readonly HttpDataService _instance = new();
+    private readonly string _baseUrl = "https://wwnd.space";
+    private readonly string _apiUrl = "https://wwnd.space/public/api/index.php";
+    private readonly string _loginUrl = "https://wwnd.space/public/login.php";
 
     public ApiService()
     {
     }
 
-    private List<TitlesByDay> _scheduleData;
-    public async Task<List<TitlesByDay>> GetScheduleAsync(bool forceRefresh = false)
+    public async Task<Day[]> GetScheduleAsync(bool forceRefresh = false)
     {
-        _scheduleData = await _instance.GetAsync<List<TitlesByDay>>("title/schedule", null, forceRefresh);
+        var formList = new List<KeyValuePair<string, string>>
+        {
+            new("query", "schedule"),
+        };
+
+        var response = await _instance.PostAsFormAsync<ScheduleBase>(_apiUrl, new FormUrlEncodedContent(formList), "schedule", forceRefresh);
 
         await Task.CompletedTask;
-        return _scheduleData;
+        return response.Data;
     }
 
-
-    private Title _releaseData;
-    public async Task<Title> GetTitleAsync(long id)
+    public async Task<Release> GetReleaseAsync(long id)
     {
-        _releaseData = await _instance.GetAsync<Title>($"title?id={id}");
+        var formList = new List<KeyValuePair<string, string>>
+        {
+            new("query", "release"),
+            new("id", $"{id}"),
+        };
+
+        var response = await _instance.PostAsFormAsync<ReleaseBase>(_apiUrl, new FormUrlEncodedContent(formList), $"release-{id}");
 
         await Task.CompletedTask;
-        return _releaseData;
+        return response.Data;
     }
 
-    public async Task<TitlesSearchResult> SearchTitles(string queryString)
+    public async Task<Release[]> SearchAsync(string queryString)
     {
-        return await _instance.GetAsync<TitlesSearchResult>($"/title/search?search={queryString}&order_by=names.ru");
+        var formList = new List<KeyValuePair<string, string>>
+        {
+            new("query", "search"),
+            new("search", queryString),
+        };
+
+        var response = await _instance.PostAsFormAsync<SearchBase>(_apiUrl, new FormUrlEncodedContent(formList), $"search-{queryString}");
+        await Task.CompletedTask;
+        return response.Data;
     }
 
-    public async Task<UserData> GetUserAsync(string session)
+    public async Task<UserData> GetUserAsync(string sessionId)
     {
-        return await _instance.GetAsync<UserData>($"user?session={session}");
+        var formList = new List<KeyValuePair<string, string>>
+        {
+            new("query", "user"),
+        };
+
+        _instance.CookieContainer.Add(new Uri(_baseUrl), new Cookie("PHPSESSID", sessionId));
+        var response = await _instance.PostAsFormAsync<UserBase>(_apiUrl, new FormUrlEncodedContent(formList), "user", true);
+        await Task.CompletedTask;
+        return response.Data;
     }
+
+    public async Task<Session> GetUserSession(FormUrlEncodedContent form)
+    {
+        return await _instance.PostAsFormAsync<Session>(_loginUrl, form, "", true);
+    }
+
+    public CookieCollection GetCookies() =>
+        _instance.GetCookieCollection().GetCookies(new Uri("https://wwnd.space"));
+
+    public void RemoveCookies() =>
+        _instance.CookieContainer.Add(new Uri(_baseUrl), new Cookie("PHPSESSID", string.Empty));
 }

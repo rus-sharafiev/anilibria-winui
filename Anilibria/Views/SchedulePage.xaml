@@ -11,10 +11,10 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <CollectionViewSource x:Key="TitlesGroups" 
-                              Source="{x:Bind ViewModel.TitlesGroups, Mode=OneWay}" 
+        <CollectionViewSource x:Key="GroupedReleases" 
+                              Source="{x:Bind ViewModel.GroupedReleases, Mode=OneWay}" 
                               IsSourceGrouped="True" 
-                              ItemsPath="Titles"/>
+                              ItemsPath="Releases"/>
 
         <converters:ImageSourceConverter x:Key="ImageSourceConverter"/>
         <toolkitconverters:StringVisibilityConverter x:Key="StringVisibilityConverter" />
@@ -22,7 +22,7 @@
 
     <Grid>
         <GridView x:Name="ScheduleGridView"
-                  ItemsSource="{Binding Source={StaticResource TitlesGroups}}"
+                  ItemsSource="{Binding Source={StaticResource GroupedReleases}}"
                   SelectionMode="None"
                   IsItemClickEnabled="True"
                   ItemClick="{x:Bind ViewModel.OnItemClick}"
@@ -31,11 +31,11 @@
                   animations:Connected.ListItemKey="listItemKey">
 
             <GridView.ItemTemplate>
-                <DataTemplate x:DataType="models:Title">
+                <DataTemplate x:DataType="models:Release">
                     <Grid Width="150" x:Name="itemPoster" CornerRadius="4">
                         <Image>
                             <Image.Source>
-                                <BitmapImage UriSource="{x:Bind Posters.Small.Url, Converter={StaticResource ImageSourceConverter}}"
+                                <BitmapImage UriSource="{x:Bind Poster, Converter={StaticResource ImageSourceConverter}}"
                                              DecodePixelWidth="150" DecodePixelType="Logical"/>
                             </Image.Source>
                         </Image>
@@ -46,7 +46,7 @@
             <GridView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
-                        <DataTemplate x:DataType="models:GroupedTitles">
+                        <DataTemplate x:DataType="models:GroupedReleases">
                             <Grid Margin="0">
                                 <TextBlock Text='{x:Bind GroupTitle}'
                                            Margin="{StaticResource SmallTopMargin}"

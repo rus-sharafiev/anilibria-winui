@@ -16,8 +16,10 @@ public class PageService : IPageService
     {
         Configure<MainViewModel, MainPage>();
         Configure<ScheduleViewModel, SchedulePage>();
-        Configure<TitleViewModel, TitlePage>();
+        Configure<ReleaseViewModel, ReleasePage>();
         Configure<SettingsViewModel, SettingsPage>();
+        Configure<ReleasesViewModel, ReleasesPage>();
+        Configure<AccountViewModel, AccountPage>();
     }
 
     public Type GetPageType(string key)

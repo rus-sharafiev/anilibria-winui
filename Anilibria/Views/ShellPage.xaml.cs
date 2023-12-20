@@ -70,6 +70,14 @@ public sealed partial class ShellPage : Page
         };
     }
 
+    private void AccountNavigationViewItem_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (sender is NavigationViewItem navigationViewItem)
+        {
+            UserPicture.Margin = navigationViewItem.ActualWidth == 48 ? new Thickness() { Left = 4 } : new Thickness();
+        }
+    }
+
     #region Specify the interactive regions of the title bar
     private void AppTitleBar_Loaded(object sender, RoutedEventArgs e) => SetRegionsForCustomTitleBar();
 
@@ -87,13 +95,15 @@ public sealed partial class ShellPage : Page
         var SearchBoxRect = GetRect(bounds, scaleAdjustment);
 
         // Get the rectangle around the PersonPicture control.
-        transform = PersonPic.TransformToVisual(null);
-        bounds = transform.TransformBounds(new Rect(0, 0,
-                                                    PersonPic.ActualWidth,
-                                                    PersonPic.ActualHeight));
-        var PersonPicRect = GetRect(bounds, scaleAdjustment);
+        //transform = PersonPic.TransformToVisual(null);
+        //bounds = transform.TransformBounds(new Rect(0, 0,
+        //                                            PersonPic.ActualWidth,
+        //                                            PersonPic.ActualHeight));
+        //var PersonPicRect = GetRect(bounds, scaleAdjustment);
 
-        var rectArray = new Windows.Graphics.RectInt32[] { SearchBoxRect, PersonPicRect };
+        //var rectArray = new Windows.Graphics.RectInt32[] { SearchBoxRect, PersonPicRect };
+
+        var rectArray = new Windows.Graphics.RectInt32[] { SearchBoxRect };
 
         var nonClientInputSrc = InputNonClientPointerSource.GetForWindowId(App.MainWindow.AppWindow.Id);
         nonClientInputSrc.SetRegionRects(NonClientRegionKind.Passthrough, rectArray);

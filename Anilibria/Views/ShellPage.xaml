@@ -20,7 +20,6 @@
                 <ColumnDefinition x:Name="LeftDragColumn" Width="*" MinWidth="12"/>
                 <ColumnDefinition x:Name="SearchColumn" Width="4*" MinWidth="160"/>
                 <ColumnDefinition x:Name="RightDragColumn" Width="*" MinWidth="12"/>
-                <ColumnDefinition x:Name="AccountColumn" Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <Image x:Name="AppTitleBarIcon"
@@ -50,8 +49,8 @@
                                 SuggestionChosen="{x:Bind ViewModel.SuggestBox_SuggestionChosen, Mode=OneWay}">
                     
                     <AutoSuggestBox.ItemTemplate>
-                        <DataTemplate x:DataType="models:Title">
-                            <TextBlock Text="{x:Bind Names.Ru}" />
+                        <DataTemplate x:DataType="models:Release">
+                            <TextBlock Text="{x:Bind Names}" />
                         </DataTemplate>
                     </AutoSuggestBox.ItemTemplate>
                 </AutoSuggestBox>
@@ -74,13 +73,14 @@
                                   FontFamily="{StaticResource SymbolThemeFontFamily}" 
                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                   FontSize="12" Glyph="&#xe721;" 
-                                  Margin="0,0,1,0"/>
+                                  Margin="0,1,1,0"/>
                     </Grid>
                 </Button>
 
             </Grid>
 
-            <Grid x:Name="PersonPic" 
+            <!-- Placement of the user icon according to the WinUI 3 guideline -->
+            <!--<Grid x:Name="PersonPic" 
                   Grid.Column="5" 
                   Margin="0,0,16,0">
 
@@ -89,7 +89,7 @@
 
                 <Button CornerRadius="16" Width="32" Height="32" 
                         VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            </Grid>
+            </Grid>-->
             
         </Grid>
         <NavigationView
@@ -100,6 +100,7 @@
             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}"
             IsSettingsVisible="True"
             ExpandedModeThresholdWidth="1280"
+            OpenPaneLength="160"
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged">
 
             <NavigationView.MenuItems>
@@ -113,15 +114,29 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe787;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem x:Uid="Shell_Releases" helpers:NavigationHelper.NavigateTo="Anilibria.ViewModels.ReleasesViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe8a9;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <NavigationView.FooterMenuItems>
-                <NavigationViewItem x:Uid="Shell_Title" helpers:NavigationHelper.NavigateTo="Anilibria.ViewModels.TitleViewModel"
-                                    IsEnabled="{x:Bind ViewModel.IsTitleNavigationViewItemEnabled, Mode=OneWay}" Opacity="0"
-                                    IsEnabledChanged="{x:Bind ViewModel.IsTitleNavigationViewItemEnabledChanged, Mode=OneWay}">
+                <NavigationViewItem x:Uid="Shell_Release" helpers:NavigationHelper.NavigateTo="Anilibria.ViewModels.ReleaseViewModel"
+                                    IsEnabled="{x:Bind ViewModel.IsReleaseNavigationViewItemEnabled, Mode=OneWay}" Opacity="0"
+                                    IsEnabledChanged="{x:Bind ViewModel.IsReleaseNavigationViewItemEnabledChanged, Mode=OneWay}">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe787;"/>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xf12a;"/>
                     </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem helpers:NavigationHelper.NavigateTo="Anilibria.ViewModels.AccountViewModel" 
+                                    SizeChanged="AccountNavigationViewItem_SizeChanged">
+                    <StackPanel Orientation="Horizontal" Margin="-6,0,0,0">
+                        <PersonPicture x:Name="UserPicture" 
+                                       VerticalAlignment="Center" Height="28"
+                                       Loaded="{x:Bind ViewModel.PersonPicture_Loaded, Mode=OneWay}"/>
+                        <TextBlock x:Uid="Shell_Account" VerticalAlignment="Center" Margin="10,0,0,0" />
+                    </StackPanel>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
 

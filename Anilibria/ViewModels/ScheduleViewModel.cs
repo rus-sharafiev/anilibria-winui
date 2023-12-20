@@ -3,6 +3,7 @@ using Anilibria.Contracts.Services;
 using Anilibria.Contracts.ViewModels;
 using Anilibria.Core.Contracts.Services;
 using Anilibria.Core.Models;
+using Anilibria.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 
@@ -17,7 +18,7 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
     private bool isLoading = false;
 
     [ObservableProperty]
-    private ObservableCollection<GroupedTitles> titlesGroups = [];
+    private ObservableCollection<GroupedReleases> _groupedReleases = [];
 
     [ObservableProperty]
     private string? _connectionError;
@@ -32,10 +33,10 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
     {
         IsLoading = true;
         ConnectionError = null;
-        List<TitlesByDay> data = [];
+        Day[] days = [];
         try
         {
-            data = await _apiService.GetScheduleAsync();
+            days = await _apiService.GetScheduleAsync();
         }
         catch (Exception e)
         {
@@ -46,25 +47,25 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
             IsLoading = false;
         }
 
-        TitlesGroups.Clear();
-        foreach (var item in data)
+        GroupedReleases.Clear();
+        foreach (var day in days)
         {
-            var newGroup = new GroupedTitles
+            var newGroup = new GroupedReleases
             {
-                GroupTitle = item.Day switch
+                GroupTitle = day.Number switch
                 {
-                    0 => "Понедельник",
-                    1 => "Вторник",
-                    2 => "Среда",
-                    3 => "Четверг",
-                    4 => "Пятница",
-                    5 => "Суббота",
-                    6 => "Воскресенье",
+                    "1" => "Monday".GetLocalized(),
+                    "2" => "Tuesday".GetLocalized(),
+                    "3" => "Wednesday".GetLocalized(),
+                    "4" => "Thursday".GetLocalized(),
+                    "5" => "Friday".GetLocalized(),
+                    "6" => "Saturday".GetLocalized(),
+                    "7" => "Sunday".GetLocalized(),
                     _ => "",
                 },
-                Titles = new ObservableCollection<Title>(item.List)
+                Releases = new ObservableCollection<Release>(day.Items)
             };
-            TitlesGroups.Add(newGroup);
+            GroupedReleases.Add(newGroup);
         }
     }
 
@@ -75,9 +76,9 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
 
     public void OnItemClick(object _, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is Title title)
+        if (e.ClickedItem is Release release)
         {
-            _navigationService.NavigateTo(typeof(TitleViewModel).FullName!, title);
+            _navigationService.NavigateTo(typeof(ReleaseViewModel).FullName!, release);
         }
     }
 

@@ -1,14 +1,20 @@
 ﻿using Anilibria.Core.Models;
+using System.Net;
 
 namespace Anilibria.Core.Contracts.Services;
 
 public interface IApiService
 {
-    Task<List<TitlesByDay>> GetScheduleAsync(bool forceRefresh = false);
+    Task<Day[]> GetScheduleAsync(bool forceRefresh = false);
 
-    Task<Title> GetTitleAsync(long id);
+    Task<Release> GetReleaseAsync(long id);
 
-    Task<UserData> GetUserAsync(string session);
+    Task<Release[]> SearchAsync(string queryString);
 
-    Task<TitlesSearchResult> SearchTitles(string queryString);
+    Task<UserData> GetUserAsync(string sessionId);
+
+    Task<Session> GetUserSession(FormUrlEncodedContent form);
+
+    CookieCollection GetCookies();
+    void RemoveCookies();
 }

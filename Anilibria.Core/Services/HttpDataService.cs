@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using Anilibria.Core.Contracts.Services;
 using Newtonsoft.Json;
@@ -8,18 +9,55 @@ public class HttpDataService : IHttpDataService
 {
     private readonly Dictionary<string, object> responseCache;
     private readonly HttpClient client;
+    private readonly HttpClientHandler handler;
+    public CookieContainer CookieContainer { get; set; } = new();
 
     public HttpDataService(string defaultBaseUrl = "")
     {
-        client = new HttpClient();
+        handler = new HttpClientHandler() { CookieContainer = CookieContainer };
+        client = new HttpClient(handler);
 
         if (!string.IsNullOrEmpty(defaultBaseUrl))
         {
             client.BaseAddress = new Uri($"{defaultBaseUrl}/");
         }
 
-        responseCache = new Dictionary<string, object>();
+        responseCache = [];
     }
+
+
+    public async Task<T> PostAsFormAsync<T>(string uri, FormUrlEncodedContent content, string contentKey, bool forceRefresh = false)
+    {
+        T result = default;
+
+        if (forceRefresh || !responseCache.TryGetValue(contentKey, out var value))
+        {
+            var response = await client.PostAsync(uri, content);
+            response.EnsureSuccessStatusCode();
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            System.Diagnostics.Debug.WriteLine("request");
+            result = await Task.Run(() => JsonConvert.DeserializeObject<T>(responseBody));
+
+            if (responseCache.ContainsKey(contentKey))
+            {
+                responseCache[contentKey] = result;
+            }
+            else
+            {
+                responseCache.Add(contentKey, result);
+            }
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("from cache");
+            result = (T)value;
+        }
+
+        return result;
+    }
+
+    // --------------------------------------------------------------------------------
 
     public async Task<T> GetAsync<T>(string uri, string accessToken = null, bool forceRefresh = false)
     {
@@ -27,7 +65,6 @@ public class HttpDataService : IHttpDataService
 
         if (forceRefresh || !responseCache.TryGetValue(uri, out var value))
         {
-            System.Diagnostics.Debug.WriteLine("request");
             AddAuthorizationHeader(accessToken);
             var json = await client.GetStringAsync(uri);
             result = await Task.Run(() => JsonConvert.DeserializeObject<T>(json));
@@ -43,7 +80,6 @@ public class HttpDataService : IHttpDataService
         }
         else
         {
-            System.Diagnostics.Debug.WriteLine("from cache");
             result = (T)value;
         }
 
@@ -78,15 +114,6 @@ public class HttpDataService : IHttpDataService
         var response = await client.PostAsync(uri, new StringContent(serializedItem, Encoding.UTF8, "application/json"));
 
         return response.IsSuccessStatusCode;
-    }
-
-    public async Task<T> PostAsFormEncodeAsync<T>(string uri, List<KeyValuePair<string, string>> list)
-    {
-        var response = await client.PostAsync(uri, new FormUrlEncodedContent(list));
-        response.EnsureSuccessStatusCode();
-        var responseBody = await response.Content.ReadAsStringAsync();
-
-        return await Task.Run(() => JsonConvert.DeserializeObject<T>(responseBody));
     }
 
     public async Task<bool> PutAsync<T>(string uri, T item)
@@ -125,6 +152,9 @@ public class HttpDataService : IHttpDataService
 
         return response.IsSuccessStatusCode;
     }
+
+    public CookieContainer GetCookieCollection() => handler.CookieContainer;
+    public void RemoveCookies(Uri uri) => handler.CookieContainer.Add(uri, []);
 
     // Add this to all public methods
     private void AddAuthorizationHeader(string token)

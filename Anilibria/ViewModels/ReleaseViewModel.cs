@@ -14,10 +14,10 @@ using Anilibria.Contracts.Services;
 
 namespace Anilibria.ViewModels;
 
-public partial class TitleViewModel : ObservableRecipient, INavigationAware
+public partial class ReleaseViewModel : ObservableRecipient, INavigationAware
 {
     [ObservableProperty]
-    private Title? _title;
+    private Release? _release;
 
     [ObservableProperty]
     private MediaPlayerElement _videoPlayerElement = new();
@@ -32,7 +32,7 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
     private ObservableCollection<string> _episodesList = [];
 
     [ObservableProperty]
-    private ObservableCollection<GroupedTitles> _franchisesGroups = [];
+    private ObservableCollection<GroupedReleases> _franchisesGroups = [];
 
     [ObservableProperty]
     private int _selectedEpisode = 0;
@@ -50,7 +50,7 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
     private readonly INavigationService _navigationService;
     private readonly IVideoQualitySelectorService _videoQualitySelectorService;
 
-    public TitleViewModel(IApiService apiService, IVideoQualitySelectorService videoQualitySelectorService, INavigationService navigationService)
+    public ReleaseViewModel(IApiService apiService, IVideoQualitySelectorService videoQualitySelectorService, INavigationService navigationService)
     {
         _apiService = apiService;
         _videoQualitySelectorService = videoQualitySelectorService;
@@ -60,22 +60,22 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
     #region Navigation
     public void OnNavigatedTo(object parameter)
     {
-        if (parameter is Title title)
+        if (parameter is Release release)
         {
-            Title = title;
-            GetFranchises(title);
+            Release = release;
+            GetFranchises(release);
 
             // Create episodes list
-            foreach (var entry in title.Player.List)
+            foreach (var episode in release.Playlist.Reverse())
             {
-                var episode = entry.Value.Name is not null ? $". {entry.Value.Name}" : " серия";
-                EpisodesList.Add($"{entry.Value.Episode}{episode}");
+                var episodeName = episode.Name is not null ? $"{episode.Ordinal}. {episode.Name}" : episode.Title;
+                EpisodesList.Add(episodeName);
             }
 
             // Subtitles team group visibility
-            if (Title.Team.Translator.Length == 0 &&
-                Title.Team.Editing.Length == 0 &&
-                Title.Team.Decor.Length == 0)
+            if (Release.Members.Translating.Length == 0 &&
+                Release.Members.Editing.Length == 0 &&
+                Release.Members.Decorating.Length == 0)
             {
                 SubtitlesGroupVisibility = Visibility.Collapsed;
             }
@@ -96,39 +96,39 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
     #endregion
 
     #region Franchises
-    private async void GetFranchises(Title title)
+    private async void GetFranchises(Release release)
     {
-        foreach (var franchise in title.Franchises)
+        foreach (var franchise in release.Franchises)
         {
-            var releases = new ObservableCollection<Title>();
-            foreach (var release in franchise.Releases)
+            var releases = new ObservableCollection<Release>();
+            foreach (var franchiseRelease in franchise.Releases)
             {
                 try
                 {
-                    var releaseTitle = await _apiService.GetTitleAsync(release.Id);
-                    releaseTitle.IsCurrentTitle = releaseTitle.Id == title.Id;
-                    releases.Add(releaseTitle);
+                    var fullFranchiseRelease = await _apiService.GetReleaseAsync(franchiseRelease.Id);
+                    fullFranchiseRelease.IsCurrentRelease = fullFranchiseRelease.Id == release.Id;
+                    releases.Add(fullFranchiseRelease);
                 }
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine(ex);
                 }
             }
-            FranchisesGroups.Add(new GroupedTitles
+            FranchisesGroups.Add(new GroupedReleases
             {
                 GroupTitle = $"Порядок просмотра фрашизы {franchise.Franchise.Name}",
-                Titles = releases
+                Releases = releases
             });
         }
     }
 
     public void OnItemClick(object _, ItemClickEventArgs e)
     {
-        var title = e.ClickedItem as Title;
-        if (title is not null && !title.IsCurrentTitle)
+        var release = e.ClickedItem as Release;
+        if (release is not null && !release.IsCurrentRelease)
         {
-            title.IsAnimationAllowed = false;
-            _navigationService.NavigateTo(typeof(TitleViewModel).FullName!, title);
+            release.IsAnimationAllowed = false;
+            _navigationService.NavigateTo(typeof(ReleaseViewModel).FullName!, release);
         }
     }
     #endregion
@@ -137,7 +137,7 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
 
     private void CreateMediaPlaybackList(bool videoQualityChanged = false)
     {
-        if (Title is not null && VideoPlayerElement is not null)
+        if (Release is not null && VideoPlayerElement is not null)
         {
 
             // Get curent player state
@@ -152,20 +152,19 @@ public partial class TitleViewModel : ObservableRecipient, INavigationAware
 
             // Create new MediaPlaybackList
             _mediaPlaybackList = new MediaPlaybackList { MaxPrefetchTime = TimeSpan.Zero };
-            foreach (var entry in Title.Player.List)
+            foreach (var episode in Release.Playlist.Reverse())
             {
                 var hls = _videoQualitySelectorService.Qlt switch
                 {
-                    QltString.SD => entry.Value.Hls.Sd,
-                    QltString.HD => entry.Value.Hls.Hd,
-                    QltString.FHD => entry.Value.Hls.Fhd,
+                    QltString.SD => episode.Sd,
+                    QltString.HD => episode.Hd,
+                    QltString.FHD => episode.Fullhd,
                     _ => null
                 };
 
                 if (hls is not null)
                 {
-                    var uri = new Uri(new Uri($"https://{Title.Player.Host}"), hls);
-                    var mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(uri));
+                    var mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(hls));
                     _mediaPlaybackList.Items.Add(mediaPlaybackItem);
                 }
             }

@@ -10,7 +10,9 @@
     <Page.Resources>
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </Page.Resources>
-    <Grid>
+    <StackPanel Margin="{StaticResource NavigationViewPageContentMargin}">
+
+        <TextBlock x:Uid="Settings_Header" Style="{StaticResource HeaderTextBlockStyle}" />
         <StackPanel
             x:Name="ContentArea">
             <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
@@ -63,5 +65,5 @@
                 <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />
             </StackPanel>
         </StackPanel>
-    </Grid>
+    </StackPanel>
 </Page>

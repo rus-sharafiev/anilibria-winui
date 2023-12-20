@@ -6,13 +6,13 @@ using CommunityToolkit.WinUI.UI.Animations;
 
 namespace Anilibria.Views;
 
-public sealed partial class TitlePage : Page
+public sealed partial class ReleasePage : Page
 {
-    public TitleViewModel ViewModel { get; }
+    public ReleaseViewModel ViewModel { get; }
 
-    public TitlePage()
+    public ReleasePage()
     {
-        ViewModel = App.GetService<TitleViewModel>();
+        ViewModel = App.GetService<ReleaseViewModel>();
         InitializeComponent();
 
         ViewModel.VideoPlayerElement = VideoPlayer;
@@ -24,9 +24,9 @@ public sealed partial class TitlePage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        if (e.Parameter is Title title && title.IsAnimationAllowed)
+        if (e.Parameter is Release release && release.IsAnimationAllowed)
         {
-            this.RegisterElementForConnectedAnimation("listItemKey", titlePoster);
+            this.RegisterElementForConnectedAnimation("listItemKey", releasePoster);
         }
     }
 }

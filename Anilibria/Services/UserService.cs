@@ -1,7 +1,6 @@
 ﻿using Anilibria.Contracts.Services;
 using Anilibria.Core.Contracts.Services;
 using Anilibria.Core.Models;
-using Anilibria.Core.Services;
 
 namespace Anilibria.Services;
 
@@ -11,10 +10,12 @@ internal class UserService : IUserService
     private readonly ILocalSettingsService _localSettingsService;
     private const string SettingsKey = "UserSession";
     private string? UserSession { get; set; }
-    private readonly HttpDataService _httpDataService = new("https://login.anilibria.srrlab.ru");
 
     public UserData? User { get; set;}
     public event EventHandler? UserChanged;
+
+    public LoginError? LoginError { get; set; }
+    public event EventHandler? LoginErrorChanged;
 
     public UserService(ILocalSettingsService localSettingsService, IApiService apiService)
     {
@@ -34,7 +35,7 @@ internal class UserService : IUserService
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine("User fetch error" + ex);
             }
 
         }
@@ -43,22 +44,21 @@ internal class UserService : IUserService
 
     public async void Login(string username, string password)
     {
-        var list = new List<KeyValuePair<string, string>>
+        var formList = new List<KeyValuePair<string, string>>
         {
             new("mail", username),
-            new("passwd", password),
+            new("passwd", password)
         };
+        var response = await _apiService.GetUserSession(new FormUrlEncodedContent(formList));
 
-        var session = await _httpDataService.PostAsFormEncodeAsync<Session>("", list);
-
-        if (session.SessionId is not null)
+        if (response?.SessionId is not null)
         {
-            UserSession = session.SessionId;
-            await SaveUserSessionInSettingsAsync(session.SessionId);
+            UserSession = response.SessionId;
+            await SaveUserSessionInSettingsAsync(response.SessionId);
 
             try
             {
-                User = await _apiService.GetUserAsync(session.SessionId);
+                User = await _apiService.GetUserAsync(UserSession);
                 UserChanged?.Invoke(this, new EventArgs());
             }
             catch (Exception ex)
@@ -66,12 +66,24 @@ internal class UserService : IUserService
                 System.Diagnostics.Debug.WriteLine(ex);
             }
         }
+        else
+        {
+            LoginError = new()
+            {
+                Key = response?.Key,
+                Mes = response?.Mes,
+            };
+            LoginErrorChanged?.Invoke(this, new EventArgs());
+        }
     }
 
-    public void LogOut()
+    public async void LogOut()
     {
         User = null;
+        UserSession = null;
+        await RemoveUserSessionFromSettingsAsync();
         UserChanged?.Invoke(this, new EventArgs());
+        _apiService.RemoveCookies();
     }
 
     private async Task<string?> LoadUserSessionFromSettingsAsync()
@@ -82,5 +94,10 @@ internal class UserService : IUserService
     private async Task SaveUserSessionInSettingsAsync(string userSession)
     {
         await _localSettingsService.SaveSettingAsync(SettingsKey, userSession);
+    }
+
+    private async Task RemoveUserSessionFromSettingsAsync()
+    {
+        await _localSettingsService.SaveSettingAsync(SettingsKey, string.Empty);
     }
 }
