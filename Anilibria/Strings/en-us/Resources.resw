@@ -207,4 +207,22 @@
   <data name="Account_LogOutButton.Content" xml:space="preserve">
     <value>Log out</value>
   </data>
+  <data name="Account_InvalidUserError" xml:space="preserve">
+    <value>incorrect username or e-mail address</value>
+  </data>
+  <data name="Account_LoginTextBox.PlaceholderText" xml:space="preserve">
+    <value>Username or e-mail address</value>
+  </data>
+  <data name="Account_PasswordTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter password</value>
+  </data>
+  <data name="Account_WrongPasswdError" xml:space="preserve">
+    <value>incorrect password</value>
+  </data>
+  <data name="Account_EmptyPasswordFieldError" xml:space="preserve">
+    <value>enter password</value>
+  </data>
+  <data name="Account_EmptyUsernameFieldError" xml:space="preserve">
+    <value>enter username or e-mail address</value>
+  </data>
 </root>

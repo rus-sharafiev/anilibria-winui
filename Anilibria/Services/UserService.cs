@@ -60,6 +60,9 @@ internal class UserService : IUserService
             {
                 User = await _apiService.GetUserAsync(UserSession);
                 UserChanged?.Invoke(this, new EventArgs());
+
+                LoginError = null;
+                LoginErrorChanged?.Invoke(this, new EventArgs());
             }
             catch (Exception ex)
             {

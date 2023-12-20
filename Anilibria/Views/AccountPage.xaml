@@ -4,33 +4,64 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:Anilibria.Converters"
     mc:Ignorable="d">
 
-    <Grid x:Name="ContentArea" Margin="{StaticResource NavigationViewPageContentMargin}">
-        <TextBlock x:Uid="Account_Header" Style="{StaticResource HeaderTextBlockStyle}" />
+    <Page.Resources>
+        <converters:ImageSourceConverter x:Key="ImageSourceConverter"/>
+    </Page.Resources>
 
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="400"
-                    Visibility="{x:Bind ViewModel.FormVisibility, Mode=OneWay}">
-            <TextBox x:Name="Login" Width="360"
-                     x:Uid="Account_LoginTextBox" Margin="{StaticResource SmallTopBottomMargin}"/>
-            <PasswordBox x:Name="Password" Width="360"
-                         x:Uid="Account_PasswordTextBox" Margin="{StaticResource SmallTopBottomMargin}"/>
-            <Button x:Name="LoginSubmitButton" x:Uid="Account_LoginSubmitButton"
+    <StackPanel x:Name="ContentArea" Margin="{StaticResource NavigationViewPageContentMargin}">
+        <TextBlock x:Uid="Account_Header" Style="{ThemeResource HeaderTextBlockStyle}" Margin="{StaticResource LargeBottomMargin}"/>
+
+        <StackPanel Visibility="{x:Bind ViewModel.FormVisibility, Mode=OneWay}"
+                    HorizontalAlignment="Left">
+            
+            <TextBox x:Uid="Account_LoginTextBox"
+                     x:Name="LoginTextBox"
+                     Margin="{StaticResource SmallTopMargin}" Width="360"/>
+            <TextBlock Text="{x:Bind ViewModel.UserNameError, Mode=OneWay}" 
+                       Style="{StaticResource CaptionTextBlockStyle}" 
+                       Margin="{StaticResource SmallLeftRightMargin}" 
+                       Foreground="{ThemeResource SystemErrorTextColor}" />
+            
+            <PasswordBox x:Uid="Account_PasswordTextBox" 
+                         x:Name="PasswordBox"
+                         Margin="{StaticResource SmallTopMargin}" Width="360"/>
+            <TextBlock Text="{x:Bind ViewModel.PasswordError, Mode=OneWay}" 
+                       Style="{StaticResource CaptionTextBlockStyle}" 
+                       Margin="{StaticResource SmallLeftRightMargin}" 
+                       Foreground="{ThemeResource SystemErrorTextColor}" />
+            
+            <Button x:Uid="Account_LoginSubmitButton"
                     Click="LoginSubmitButton_Click" ClickMode="Press"
                     HorizontalAlignment="Right"
                     Margin="{StaticResource MediumTopMargin}"/>
         </StackPanel>
 
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="400"
+        <StackPanel HorizontalAlignment="Left"
                     Visibility="{x:Bind ViewModel.UserDataVisibility, Mode=OneWay}">
 
+            <StackPanel Orientation="Horizontal">
+                <PersonPicture Height="96">
+                    <PersonPicture.ProfilePicture>
+                        <BitmapImage DecodePixelWidth="96"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind ViewModel.ProfilePicture, Converter={StaticResource ImageSourceConverter}, Mode=OneWay}" />
+                    </PersonPicture.ProfilePicture>
+                </PersonPicture>
 
-            <TextBlock Text="{x:Bind ViewModel.User.Login}" />
-            <Button x:Uid="Account_LogOutButton"
-                    Click="{x:Bind ViewModel.LogOut, Mode=OneWay}" ClickMode="Press"
-                    HorizontalAlignment="Right"
-                    Margin="{StaticResource MediumTopMargin}"/>
+                <StackPanel Margin="{StaticResource MediumLeftMargin}">
+                    <TextBlock Text="{x:Bind ViewModel.User.Login, Mode=OneWay}" 
+                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                    
+                    <Button x:Uid="Account_LogOutButton"
+                            Click="{x:Bind ViewModel.LogOut, Mode=OneWay}" ClickMode="Press"
+                            Margin="{StaticResource SmallTopMargin}"/>
+                </StackPanel>
+            </StackPanel>
+
         </StackPanel>
 
-    </Grid>
+    </StackPanel>
 </Page>
