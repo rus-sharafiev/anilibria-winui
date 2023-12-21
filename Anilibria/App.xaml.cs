@@ -61,6 +61,7 @@ public partial class App : Application
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
             services.AddSingleton<IVideoQualitySelectorService, VideoQualitySelectorService>();
             services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<IImageService, ImageService>();
             services.AddTransient<INavigationViewService, NavigationViewService>();
 
             services.AddSingleton<IActivationService, ActivationService>();

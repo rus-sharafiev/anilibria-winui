@@ -14,6 +14,7 @@ public class ActivationService : IActivationService
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly IVideoQualitySelectorService _videoQualitySelectorService;
     private readonly IUserService _userService;
+    private readonly IImageService _imageService;
     private UIElement? _shell = null;
 
     public ActivationService(
@@ -21,7 +22,8 @@ public class ActivationService : IActivationService
         IEnumerable<IActivationHandler> activationHandlers,
         IThemeSelectorService themeSelectorService,
         IVideoQualitySelectorService videoQualitySelectorService,
-        IUserService userService
+        IUserService userService,
+        IImageService imageService
     )
     {
         _defaultHandler = defaultHandler;
@@ -29,6 +31,7 @@ public class ActivationService : IActivationService
         _themeSelectorService = themeSelectorService;
         _videoQualitySelectorService = videoQualitySelectorService;
         _userService = userService;
+        _imageService = imageService;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -71,6 +74,7 @@ public class ActivationService : IActivationService
     private async Task InitializeAsync()
     {
         await _userService.InitializeAsync().ConfigureAwait(false);
+        await _imageService.InitializeAsync().ConfigureAwait(false);
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
         await _videoQualitySelectorService.InitializeAsync().ConfigureAwait(false);
         await Task.CompletedTask;
