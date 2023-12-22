@@ -117,20 +117,104 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Account_EmptyPasswordFieldError" xml:space="preserve">
+    <value>введите пароль</value>
+  </data>
+  <data name="Account_EmptyUsernameFieldError" xml:space="preserve">
+    <value>введите имя пользователя или email</value>
+  </data>
+  <data name="Account_Header.Text" xml:space="preserve">
+    <value>Учетная запись</value>
+  </data>
+  <data name="Account_InvalidUserError" xml:space="preserve">
+    <value>не верное имя пользователя или email</value>
+  </data>
+  <data name="Account_LoginSubmitButton.Content" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="Account_LoginTextBox.Header" xml:space="preserve">
+    <value>Логин</value>
+  </data>
+  <data name="Account_LoginTextBox.PlaceholderText" xml:space="preserve">
+    <value>Имя пользователя или email</value>
+  </data>
+  <data name="Account_LogOutButton.Content" xml:space="preserve">
+    <value>Выйти</value>
+  </data>
+  <data name="Account_PasswordTextBox.Header" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="Account_PasswordTextBox.PlaceholderText" xml:space="preserve">
+    <value>Введите пароль</value>
+  </data>
+  <data name="Account_WrongPasswdError" xml:space="preserve">
+    <value>не верный пароль</value>
+  </data>
   <data name="AppDescription" xml:space="preserve">
     <value>Anilibria</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
     <value>Anilibria</value>
   </data>
-  <data name="Friday" xml:space="preserve">
+  <data name="Release_Decorating.Text" xml:space="preserve">
+    <value>Оформление:</value>
+  </data>
+  <data name="Release_Description.Text" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="Release_Editing.Text" xml:space="preserve">
+    <value>Редактура:</value>
+  </data>
+  <data name="Release_Episodes.Header" xml:space="preserve">
+    <value>Список серий</value>
+  </data>
+  <data name="Release_Genres.Text" xml:space="preserve">
+    <value>Жанры</value>
+  </data>
+  <data name="Release_Season.Text" xml:space="preserve">
+    <value>Сезон</value>
+  </data>
+  <data name="Release_Status.Text" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Release_Timing.Text" xml:space="preserve">
+    <value>Тайминг</value>
+  </data>
+  <data name="Release_Translating.Text" xml:space="preserve">
+    <value>Перевод: </value>
+  </data>
+  <data name="Release_Type.Text" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Release_Video.Text" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="Release_Voices.Text" xml:space="preserve">
+    <value>Озвучка</value>
+  </data>
+  <data name="Release_WorkingOnSubtitles.Text" xml:space="preserve">
+    <value>Работа над субтитрами</value>
+  </data>
+  <data name="Schedule_Friday" xml:space="preserve">
     <value>Пятница</value>
   </data>
-  <data name="Monday" xml:space="preserve">
+  <data name="Schedule_Monday" xml:space="preserve">
     <value>Понедельник</value>
   </data>
-  <data name="Saturday" xml:space="preserve">
+  <data name="Schedule_Saturday" xml:space="preserve">
     <value>Суббота</value>
+  </data>
+  <data name="Schedule_Sunday" xml:space="preserve">
+    <value>Воскресенье</value>
+  </data>
+  <data name="Schedule_Thursday" xml:space="preserve">
+    <value>Четверг</value>
+  </data>
+  <data name="Schedule_Tuesday" xml:space="preserve">
+    <value>Вторник</value>
+  </data>
+  <data name="Schedule_Wednesday" xml:space="preserve">
+    <value>Среда</value>
   </data>
   <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
     <value>Privacy Statement</value>
@@ -143,6 +227,9 @@
   </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>TODO: Replace with your app description.</value>
+  </data>
+  <data name="Settings_Header.Text" xml:space="preserve">
+    <value>Настройки</value>
   </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>Personalization</value>
@@ -159,8 +246,14 @@
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>Light</value>
   </data>
+  <data name="Shell_Account.Text" xml:space="preserve">
+    <value>Учетная запись</value>
+  </data>
   <data name="Shell_Main.Content" xml:space="preserve">
     <value>Главная</value>
+  </data>
+  <data name="Shell_Release.Content" xml:space="preserve">
+    <value>Релиз</value>
   </data>
   <data name="Shell_Releases.Content" xml:space="preserve">
     <value>Релизы</value>
@@ -168,22 +261,7 @@
   <data name="Shell_Schedule.Content" xml:space="preserve">
     <value>Расписание</value>
   </data>
-  <data name="Shell_Title.Content" xml:space="preserve">
-    <value>Тайтл</value>
-  </data>
-  <data name="Sunday" xml:space="preserve">
-    <value>Воскресенье</value>
-  </data>
-  <data name="Thursday" xml:space="preserve">
-    <value>Четверг</value>
-  </data>
-  <data name="TitleBarSearchBoxButton.Text" xml:space="preserve">
+  <data name="Shell_TitleBarSearchBoxButton.Text" xml:space="preserve">
     <value>Поиск по названию</value>
-  </data>
-  <data name="Tuesday" xml:space="preserve">
-    <value>Вторник</value>
-  </data>
-  <data name="Wednesday" xml:space="preserve">
-    <value>Среда</value>
   </data>
 </root>

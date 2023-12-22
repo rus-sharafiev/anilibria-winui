@@ -156,7 +156,7 @@
   <data name="SettingsPage_PrivacyTermsLink.NavigateUri" xml:space="preserve">
     <value>https://YourPrivacyUrlGoesHere/</value>
   </data>
-  <data name="TitleBarSearchBoxButton.Text" xml:space="preserve">
+  <data name="Shell_TitleBarSearchBoxButton.Text" xml:space="preserve">
     <value>Find by name</value>
   </data>
   <data name="Shell_Release.Content" xml:space="preserve">
@@ -165,25 +165,25 @@
   <data name="Shell_Releases.Content" xml:space="preserve">
     <value>Releases</value>
   </data>
-  <data name="Friday" xml:space="preserve">
+  <data name="Schedule_Friday" xml:space="preserve">
     <value>Friday</value>
   </data>
-  <data name="Monday" xml:space="preserve">
+  <data name="Schedule_Monday" xml:space="preserve">
     <value>Monday</value>
   </data>
-  <data name="Saturday" xml:space="preserve">
+  <data name="Schedule_Saturday" xml:space="preserve">
     <value>Saturday</value>
   </data>
-  <data name="Sunday" xml:space="preserve">
+  <data name="Schedule_Sunday" xml:space="preserve">
     <value>Sunday</value>
   </data>
-  <data name="Thursday" xml:space="preserve">
+  <data name="Schedule_Thursday" xml:space="preserve">
     <value>Thursday</value>
   </data>
-  <data name="Tuesday" xml:space="preserve">
+  <data name="Schedule_Tuesday" xml:space="preserve">
     <value>Tuesday</value>
   </data>
-  <data name="Wednesday" xml:space="preserve">
+  <data name="Schedule_Wednesday" xml:space="preserve">
     <value>Wednesday</value>
   </data>
   <data name="Shell_Account.Text" xml:space="preserve">
@@ -224,5 +224,44 @@
   </data>
   <data name="Account_EmptyUsernameFieldError" xml:space="preserve">
     <value>enter username or e-mail address</value>
+  </data>
+  <data name="Release_Decorating.Text" xml:space="preserve">
+    <value>Decorating:</value>
+  </data>
+  <data name="Release_Description.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Release_Editing.Text" xml:space="preserve">
+    <value>Editing:</value>
+  </data>
+  <data name="Release_Episodes.Header" xml:space="preserve">
+    <value>Episodes list</value>
+  </data>
+  <data name="Release_Genres.Text" xml:space="preserve">
+    <value>Genres</value>
+  </data>
+  <data name="Release_Season.Text" xml:space="preserve">
+    <value>Season</value>
+  </data>
+  <data name="Release_Status.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Release_Timing.Text" xml:space="preserve">
+    <value>Timing</value>
+  </data>
+  <data name="Release_Translating.Text" xml:space="preserve">
+    <value>Translating: </value>
+  </data>
+  <data name="Release_Type.Text" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Release_Video.Text" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="Release_Voices.Text" xml:space="preserve">
+    <value>Voices</value>
+  </data>
+  <data name="Release_WorkingOnSubtitles.Text" xml:space="preserve">
+    <value>Working on subtitles</value>
   </data>
 </root>

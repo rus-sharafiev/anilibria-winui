@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml;
 using Windows.Media.Playback;
 using Microsoft.UI.Dispatching;
 using Anilibria.Contracts.Services;
+using System.Globalization;
 
 namespace Anilibria.ViewModels;
 
@@ -69,13 +70,13 @@ public partial class ReleaseViewModel : ObservableRecipient, INavigationAware
             GetFranchises(release);
 
             // Format description
-            ReleaseDescription = release.Description.Replace("<br>", "");
-            ReleaseDescription = ReleaseDescription.Split(["Порядок просмотра франшизы"], StringSplitOptions.RemoveEmptyEntries).First();
+            ReleaseDescription = release.Description.Replace("<br>", "").Replace(System.Environment.NewLine, "");
+            ReleaseDescription = ReleaseDescription.Split(["Порядок просмотра франшизы", "<b>Спонсор озвучки:</b>"], StringSplitOptions.RemoveEmptyEntries).First();
 
             // Create episodes list
             foreach (var episode in release.Playlist.Reverse())
             {
-                var episodeName = episode.Name is not null ? $"{episode.Ordinal}. {episode.Name}" : episode.Title;
+                var episodeName = episode.Name is not null ? $"{episode.Ordinal}. {episode.Name}" : $"{episode.Ordinal} серия";
                 EpisodesList.Add(episodeName);
             }
 
@@ -105,6 +106,8 @@ public partial class ReleaseViewModel : ObservableRecipient, INavigationAware
     #region Franchises
     private async void GetFranchises(Release release)
     {
+        var uiCultureName = CultureInfo.CurrentUICulture.Name;
+
         foreach (var franchise in release.Franchises)
         {
             var releases = new ObservableCollection<Release>();
@@ -121,9 +124,15 @@ public partial class ReleaseViewModel : ObservableRecipient, INavigationAware
                     System.Diagnostics.Debug.WriteLine(ex);
                 }
             }
+
+            var groupTitle = uiCultureName switch
+            {
+                "en-US" => $"How to view the {franchise.Releases.First().Ename} franchise",
+                _ => $"Порядок просмотра франшизы {franchise.Franchise.Name}",
+            };
             FranchisesGroups.Add(new GroupedReleases
             {
-                GroupTitle = $"Порядок просмотра фрашизы {franchise.Franchise.Name}",
+                GroupTitle = groupTitle,
                 Releases = releases
             });
         }

@@ -95,11 +95,12 @@
                     <StackPanel x:Name="infoGroup" RelativePanel.Below="title" Width="180">
                         <StackPanel x:Name="seasonGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
-                                       Margin="{StaticResource SmallRightMargin}" Text="Сезон" />
+                                       Margin="{StaticResource SmallRightMargin}"
+                                       x:Uid="Release_Season"/>
                             <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}">
                                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
                                            Text="{x:Bind ViewModel.Release.Season, Mode=OneWay}"
-                                           Margin="0, 0, 2, 0"
+                                           Margin="0, 0, 4, 0"
                                            VerticalAlignment="Bottom"/>
                                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
                                            Text="{x:Bind ViewModel.Release.Year, Mode=OneWay}"
@@ -109,7 +110,8 @@
 
                         <StackPanel x:Name="typeGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
-                                       Margin="{StaticResource SmallRightMargin}" Text="Тип" />
+                                       Margin="{StaticResource SmallRightMargin}" 
+                                       x:Uid="Release_Type"/>
                             <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallLeftMargin}"
                                        Text="{x:Bind ViewModel.Release.Type, Mode=OneWay}" 
                                        VerticalAlignment="Bottom"/>
@@ -117,7 +119,8 @@
 
                         <StackPanel x:Name="statusGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
-                                       Margin="{StaticResource SmallRightMargin}" Text="Статус" />
+                                       Margin="{StaticResource SmallRightMargin}"
+                                       x:Uid="Release_Status"/>
                             <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallLeftMargin}"
                                        Text="{x:Bind ViewModel.Release.Status, Mode=OneWay}" 
                                        VerticalAlignment="Bottom" />
@@ -125,7 +128,8 @@
 
                         <StackPanel x:Name="genresGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
-                                       Margin="{StaticResource SmallRightMargin}" Text="Жанры" />
+                                       Margin="{StaticResource SmallRightMargin}"
+                                       x:Uid="Release_Genres"/>
                             <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallLeftMargin}"
                                        Text="{x:Bind ViewModel.Release.Genres, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
                                        VerticalAlignment="Bottom" />
@@ -135,7 +139,8 @@
                     <StackPanel x:Name="teamGroup" RelativePanel.Below="infoGroup">
                         <StackPanel x:Name="voiceGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
-                                        Margin="{StaticResource SmallRightMargin}" Text="Озвучка" />
+                                        Margin="{StaticResource SmallRightMargin}"
+                                       x:Uid="Release_Voices"/>
                             <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallLeftMargin}"
                                         Text="{x:Bind ViewModel.Release.Voices, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
                                         VerticalAlignment="Bottom" />
@@ -143,7 +148,8 @@
 
                         <StackPanel x:Name="timingeGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
-                                       Margin="{StaticResource SmallRightMargin}" Text="Тайминг" />
+                                       Margin="{StaticResource SmallRightMargin}"
+                                       x:Uid="Release_Timing"/>
                             <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallLeftMargin}"
                                        Text="{x:Bind ViewModel.Release.Members.Timing, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
                                        VerticalAlignment="Bottom" />
@@ -152,24 +158,28 @@
                         <StackPanel x:Name="subtitlesGroup" Margin="{StaticResource SmallTopMargin}" 
                                     Visibility="{x:Bind ViewModel.SubtitlesGroupVisibility, Mode=OneWay}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" 
-                                       Margin="{StaticResource SmallRightMargin}" Text="Работа над субтитрами" />
+                                       Margin="{StaticResource SmallRightMargin}"
+                                       x:Uid="Release_WorkingOnSubtitles"/>
                             <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}"
                                         Visibility="{x:Bind ViewModel.Release.Members.Translating, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}">
-                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}" Text="Перевод:" />
+                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}"
+                                           x:Uid="Release_Translating"/>
                                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
                                            Text="{x:Bind ViewModel.Release.Members.Translating, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
                                            VerticalAlignment="Bottom" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}"
                                         Visibility="{x:Bind ViewModel.Release.Members.Editing, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}">
-                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}" Text="Редактура:" />
+                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}"
+                                           x:Uid="Release_Editing"/>
                                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
                                            Text="{x:Bind ViewModel.Release.Members.Editing, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
                                            VerticalAlignment="Bottom" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="{StaticResource XSmallLeftMargin}"
                                         Visibility="{x:Bind ViewModel.Release.Members.Decorating, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}">
-                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}" Text="Оформление:" />
+                                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="{StaticResource XSmallRightMargin}"
+                                           x:Uid="Release_Decorating"/>
                                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" 
                                            Text="{x:Bind ViewModel.Release.Members.Decorating, Converter={StaticResource StringListToStringConverter}, Mode=OneWay}" 
                                            VerticalAlignment="Bottom" />
@@ -182,7 +192,7 @@
                 <TextBlock
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="Описание" />
+                    x:Uid="Release_Description"/>
                 <TextBlock
                     Style="{ThemeResource BodyTextBlockStyle}"
                     Text="{x:Bind ViewModel.ReleaseDescription, Mode=OneWay}"
@@ -229,11 +239,11 @@
                 <TextBlock
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="Видео" />
+                    x:Uid="Release_Video"/>
 
                 <ComboBox 
                     x:Name="EpisodesComboBox"
-                    Header="Список эпизодов"
+                    x:Uid="Release_Episodes"
                     MinWidth="400"
                     Margin="{StaticResource XSmallLeftMargin}"
                     ItemsSource="{x:Bind ViewModel.EpisodesList, Mode=OneWay}"

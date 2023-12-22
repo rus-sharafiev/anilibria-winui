@@ -54,13 +54,13 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
             {
                 GroupTitle = day.Number switch
                 {
-                    "1" => "Monday".GetLocalized(),
-                    "2" => "Tuesday".GetLocalized(),
-                    "3" => "Wednesday".GetLocalized(),
-                    "4" => "Thursday".GetLocalized(),
-                    "5" => "Friday".GetLocalized(),
-                    "6" => "Saturday".GetLocalized(),
-                    "7" => "Sunday".GetLocalized(),
+                    "1" => "Schedule_Monday".GetLocalized(),
+                    "2" => "Schedule_Tuesday".GetLocalized(),
+                    "3" => "Schedule_Wednesday".GetLocalized(),
+                    "4" => "Schedule_Thursday".GetLocalized(),
+                    "5" => "Schedule_Friday".GetLocalized(),
+                    "6" => "Schedule_Saturday".GetLocalized(),
+                    "7" => "Schedule_Sunday".GetLocalized(),
                     _ => "",
                 },
                 Releases = new ObservableCollection<Release>(day.Items)
@@ -77,9 +77,7 @@ public partial class ScheduleViewModel : ObservableRecipient, INavigationAware
     public void OnItemClick(object _, ItemClickEventArgs e)
     {
         if (e.ClickedItem is Release release)
-        {
             _navigationService.NavigateTo(typeof(ReleaseViewModel).FullName!, release);
-        }
     }
 
     public void OnNavigatedFrom()
