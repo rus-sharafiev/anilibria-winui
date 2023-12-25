@@ -132,9 +132,6 @@
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>Personalization</value>
   </data>
-  <data name="Settings_Theme.Text" xml:space="preserve">
-    <value>Theme</value>
-  </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>Light</value>
   </data>
@@ -146,9 +143,6 @@
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>About this application</value>
-  </data>
-  <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>TODO: Replace with your app description.</value>
   </data>
   <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
     <value>Privacy Statement</value>
@@ -263,5 +257,17 @@
   </data>
   <data name="Release_WorkingOnSubtitles.Text" xml:space="preserve">
     <value>Working on subtitles</value>
+  </data>
+  <data name="Settings_About_Expander.Description" xml:space="preserve">
+    <value>Unofficial Windows UI 3 application for Anilibria project</value>
+  </data>
+  <data name="Settings_About_Expander.Header" xml:space="preserve">
+    <value>Anilibria</value>
+  </data>
+  <data name="Settings_Theme_Description.Text" xml:space="preserve">
+    <value>Select which app theme to display</value>
+  </data>
+  <data name="Settings_Theme_Header.Text" xml:space="preserve">
+    <value>App theme</value>
   </data>
 </root>
