@@ -1,7 +1,4 @@
-﻿using Anilibria.Contracts.Services;
-using Anilibria.Core.Models;
-using Anilibria.ViewModels;
-using CommunityToolkit.WinUI.UI.Animations;
+﻿using Anilibria.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 

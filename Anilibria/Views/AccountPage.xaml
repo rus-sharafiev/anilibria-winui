@@ -12,7 +12,7 @@
     </Page.Resources>
 
     <StackPanel x:Name="ContentArea" Margin="{StaticResource NavigationViewPageContentMargin}">
-        <TextBlock x:Uid="Account_Header" Style="{ThemeResource HeaderTextBlockStyle}" Margin="{StaticResource LargeBottomMargin}"/>
+        <TextBlock x:Uid="Account_Header" Style="{ThemeResource TitleLargeTextBlockStyle}" Margin="{StaticResource LargeBottomMargin}"/>
 
         <StackPanel Visibility="{x:Bind ViewModel.FormVisibility, Mode=OneWay}"
                     HorizontalAlignment="Left">
@@ -53,7 +53,7 @@
 
                 <StackPanel Margin="{StaticResource MediumLeftMargin}">
                     <TextBlock Text="{x:Bind ViewModel.User.Login, Mode=OneWay}" 
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
                     
                     <Button x:Uid="Account_LogOutButton"
                             Click="{x:Bind ViewModel.LogOut, Mode=OneWay}" ClickMode="Press"

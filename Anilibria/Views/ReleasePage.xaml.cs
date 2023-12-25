@@ -2,7 +2,7 @@ using Anilibria.Core.Models;
 using Anilibria.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using CommunityToolkit.WinUI.UI.Animations;
+using CommunityToolkit.WinUI.Animations;
 
 namespace Anilibria.Views;
 

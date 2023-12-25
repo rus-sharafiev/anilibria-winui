@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
     xmlns:converters="using:Anilibria.Converters"
-    xmlns:toolkitconverters="using:CommunityToolkit.WinUI.UI.Converters"
+    xmlns:toolkitconverters="using:CommunityToolkit.WinUI.Converters"
     xmlns:models="using:Anilibria.Core.Models"
     mc:Ignorable="d">
 
@@ -50,7 +50,7 @@
                             <Grid Margin="0">
                                 <TextBlock Text='{x:Bind GroupTitle}'
                                            Margin="{StaticResource SmallTopMargin}"
-                                           Style="{StaticResource HeaderTextBlockStyle}"/>
+                                           Style="{StaticResource TitleLargeTextBlockStyle}"/>
                             </Grid>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
