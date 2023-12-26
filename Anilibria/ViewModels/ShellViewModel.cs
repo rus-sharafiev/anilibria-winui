@@ -59,6 +59,7 @@ public partial class ShellViewModel : ObservableRecipient
     private void OnNavigated(object sender, NavigationEventArgs e)
     {
         IsBackEnabled = NavigationService.CanGoBack;
+        IsReleaseNavigationViewItemEnabled = e.SourcePageType == typeof(ReleasePage);
 
         if (e.SourcePageType == typeof(SettingsPage))
         {
@@ -71,8 +72,6 @@ public partial class ShellViewModel : ObservableRecipient
         {
             Selected = selectedItem;
         }
-
-        IsReleaseNavigationViewItemEnabled = e.SourcePageType == typeof(ReleasePage);
     }
 
     public void IsReleaseNavigationViewItemEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
