@@ -173,8 +173,8 @@ public partial class ReleaseViewModel : ObservableRecipient, INavigationAware
                 var hls = _videoQualitySelectorService.Qlt switch
                 {
                     QltString.SD => episode.Sd,
-                    QltString.HD => episode.Hd,
-                    QltString.FHD => episode.Fullhd,
+                    QltString.HD => episode.Hd ?? episode.Sd,
+                    QltString.FHD => episode.Fullhd ?? episode.Hd ?? episode.Sd,
                     _ => null
                 };
 
