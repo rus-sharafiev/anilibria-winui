@@ -57,7 +57,7 @@
 
             <controls:SettingsExpander x:Uid="Settings_About_Expander">
                 <controls:SettingsExpander.HeaderIcon>
-                    <BitmapIcon UriSource="ms-appx:///Assets/Logo.png" ShowAsMonochrome="False" />
+                    <ImageIcon Source="ms-appx:///Assets/Logo.png"/>
                 </controls:SettingsExpander.HeaderIcon>
                 
                 <TextBlock IsTextSelectionEnabled="True"
